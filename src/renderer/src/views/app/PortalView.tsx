@@ -4,6 +4,7 @@ import DraggableModal from "@renderer/frontend-resources/electron/components/Mod
 import { ActionButton } from "@renderer/frontend-resources/components";
 import { avatar, key, usuarios } from "@renderer/frontend-resources/assets/icons";
 import PruebaModal from "./modales/PruebaModal";
+import LoginForm from "./components/LoginForm";
 
 export default function PortalView() {
   const [showLogin, setShowLogin] = useState(false);
@@ -218,6 +219,7 @@ export default function PortalView() {
                       icon={<img src={avatar as string} alt={"icon"} className={`h-6 w-6 drop-shadow-lg`} />}
                     />
                   </div>
+                  {showLogin && <LoginForm />}
                 </div>
               </div>
             )}
