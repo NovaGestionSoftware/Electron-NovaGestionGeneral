@@ -1,0 +1,10 @@
+/* @import './base.css'; */
+@import "tailwindcss";
+
+.bg-portal {
+  background: linear-gradient(to right, #79afec, #1e40af);
+}
+
+.bg-layout {
+  background: radial-gradient(circle, #e0e8f4, #859cb1);
+}
