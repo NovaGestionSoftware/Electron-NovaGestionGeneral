@@ -7,15 +7,25 @@ import Registry from "winreg";
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
+    minWidth: 1366,
+    minHeight: 738,
+    maxWidth: 1940,
+    maxHeight: 1440,
+    show: false, // se mostrará luego de maximizar
+    icon: join(__dirname, "./../../resources/novaico.ico"),
     ...(process.platform === "linux" ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, "../preload/index.mjs"),
       sandbox: false,
     },
+  });
+
+  // Maximiza la ventana
+  mainWindow.maximize();
+
+  // Mostrar la ventana cuando esté lista
+  mainWindow.once("ready-to-show", () => {
+    mainWindow.show();
   });
 
   mainWindow.on("ready-to-show", async () => {
