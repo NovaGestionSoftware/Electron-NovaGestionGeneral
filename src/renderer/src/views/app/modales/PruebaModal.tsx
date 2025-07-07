@@ -1,9 +1,8 @@
-import { ActionButton } from "@renderer/frontend-resources/components";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function PruebaModal({ showModalState, modalType, setShowModalState }) {
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -21,26 +20,13 @@ export default function PruebaModal({ showModalState, modalType, setShowModalSta
     return () => window.removeEventListener("keydown", handleKeyDown, { capture: true });
   }, [handleCloseModal]);
 
-  //     useEffect(() => {
-  //     const handleKeyDown = (e: KeyboardEvent) => {
-  //       // cerrar el modal de nivel 2 si NO hay un Modal2 abierto
-  //       if (e.key === "Escape" && showModal === false && showModalState) {
-  //         e.preventDefault();
-  //         e.stopPropagation();
-  //         handleCloseModal();
-  //       }
-  //     };
-  //     window.addEventListener("keydown", handleKeyDown, { capture: true });
-  //     return () => window.removeEventListener("keydown", handleKeyDown, { capture: true });
-  //   }, [showModal, showModalState]);
-
   function handleCloseModal() {
     setShowModalState(false);
   }
 
-  function handleOpenModal() {
-    setShowModal(true);
-  }
+  // function handleOpenModal() {
+  //   setShowModal(true);
+  // }
 
   return (
     <>
@@ -49,10 +35,12 @@ export default function PruebaModal({ showModalState, modalType, setShowModalSta
           title="Prueba De Modal"
           isVisible={showModalState && modalType === "pruebaModal"}
           onClose={handleCloseModal}
-          width="710px"
+          width="400px"
+          index={40}
         >
           {/* CONTENIDO */}
-          <div className="flex flex-col w-[700px] px-3 py-2 gap-3 overflow-hidden 2xl:gap-5">
+          <div>Modal de prueba</div>
+          {/* <div className="flex flex-col w-[700px] px-3 py-2 gap-3 overflow-hidden 2xl:gap-5">
             <ActionButton
               text={"Abrir modal"}
               onClick={handleOpenModal}
@@ -61,9 +49,10 @@ export default function PruebaModal({ showModalState, modalType, setShowModalSta
               addTextClassName="text-black"
               addClassName="h-12"
             />
-          </div>
+          </div> */}
         </DraggableModal>
       ) : null}
+      <div className="opacity-45 fixed inset-0 z-30 bg-black"></div>
     </>
   );
 }

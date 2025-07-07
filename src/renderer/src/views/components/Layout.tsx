@@ -11,6 +11,11 @@ export default function Portal() {
     const ipc = window.electron?.ipcRenderer;
     if (!ipc) return;
 
+    ipc.invoke("get-initial-mode").then(({ mode, empresaID }) => {
+      setMode(mode);
+      setEmpresaID(empresaID);
+    });
+
     const onRegistrar = () => {
       setMode("registrar");
       setEmpresaID(null);

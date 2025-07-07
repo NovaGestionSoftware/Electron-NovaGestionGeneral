@@ -4,7 +4,13 @@ import { useState } from "react";
 export default function RegistrarView() {
   const [licenciaNueva, setLicenciaNueva] = useState(true);
   const [cambioEquipo, setCambioEquipo] = useState(false);
+  const [empresaID, setEmpresaID] = useState("");
   const handleClose = () => {};
+
+  const registrar = () => {
+    if (!empresaID.trim()) return alert("Ingresa un número válido");
+    window.electron.ipcRenderer.send("registrar-empresa", empresaID);
+  };
 
   return (
     <DraggableModal title="Registro Sistema" onClose={handleClose} width="780px">
@@ -89,6 +95,8 @@ export default function RegistrarView() {
                 <input
                   type="text"
                   className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={empresaID}
+                  onChange={(e) => setEmpresaID(e.target.value)}
                 />
               </div>
 
@@ -115,7 +123,9 @@ export default function RegistrarView() {
 
         {/* Botones */}
         <div className="flex flex-wrap justify-end gap-4">
-          <button className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700">Verificar</button>
+          <button className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700" onClick={registrar}>
+            Verificar
+          </button>
           <button className="px-4 py-2 rounded bg-gray-200 text-sm hover:bg-gray-300">BD</button>
           <button className="px-4 py-2 rounded bg-yellow-500 text-white text-sm hover:bg-yellow-600">Limpiar</button>
           <button className="px-4 py-2 rounded bg-gray-400 text-white text-sm cursor-not-allowed" disabled>

@@ -5,59 +5,58 @@ import { ActionButton } from "@renderer/frontend-resources/components";
 import { avatar, key, usuarios } from "@renderer/frontend-resources/assets/icons";
 import PruebaModal from "./modales/PruebaModal";
 import LoginForm from "./components/LoginForm";
+import SelectPuntoVenta from "./components/SelectPuntoVenta";
 
 export default function PortalView() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [openMenu, setOpenMenu] = useState(null);
-  const [modalType, setModalType] = useState("");
-  const [modalState, setModalState] = useState(false);
-
-  const toggleMenu = (menu) => {
-    setOpenMenu(openMenu === menu ? null : menu);
-  };
-
   const menuItems = [
     {
       name: "Usuario",
       subItems: [
-        { text: "Usuarios", icon: avatar, onClick: () => {} },
-        { text: "Categorías", icon: usuarios, onClick: () => {} },
-        { text: "Passwords", icon: key, onClick: () => {} },
+        { text: "Usuarios", icon: avatar, onClick: () => handleOpenModal() },
+        { text: "Categorías", icon: usuarios, onClick: () => handleOpenModal() },
+        { text: "Passwords", icon: key, onClick: () => handleOpenModal() },
       ],
     },
     {
       name: "Atributos",
       subItems: [
-        { text: "Usuarios", icon: avatar, onClick: () => {} },
-        { text: "Categorías", icon: usuarios, onClick: () => {} },
-        { text: "Passwords", icon: key, onClick: () => {} },
+        { text: "Usuarios", icon: avatar, onClick: () => handleOpenModal() },
+        { text: "Categorías", icon: usuarios, onClick: () => handleOpenModal() },
+        { text: "Env. Suc.", icon: key, onClick: () => handleOpenModal() },
       ],
     },
     {
       name: "Empresas",
       subItems: [
-        { text: "Usuarios", icon: avatar, onClick: () => {} },
-        { text: "Categorías", icon: usuarios, onClick: () => {} },
-        { text: "Passwords", icon: key, onClick: () => {} },
+        { text: "Empresas", icon: avatar, onClick: () => handleOpenModal() },
+        { text: "Nodos", icon: usuarios, onClick: () => handleOpenModal() },
       ],
     },
     {
       name: "Mantenimiento",
-      subItems: [
-        { text: "Usuarios", icon: avatar, onClick: () => {} },
-        { text: "Categorías", icon: usuarios, onClick: () => {} },
-        { text: "Passwords", icon: key, onClick: () => {} },
-      ],
+      subItems: [{ text: "Respaldar", icon: avatar, onClick: () => handleOpenModal() }],
     },
     {
       name: "Utilidades",
       subItems: [
-        { text: "Usuarios", icon: avatar, onClick: () => {} },
-        { text: "Categorías", icon: usuarios, onClick: () => {} },
-        { text: "Passwords", icon: key, onClick: () => {} },
+        { text: "Registrar", icon: avatar, onClick: () => handleOpenModal() },
+        { text: "Config. PC", icon: usuarios, onClick: () => handleOpenModal() },
       ],
     },
   ];
+
+  const [showLogin, setShowLogin] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string>(menuItems[0]?.name || "");
+  const [modalType, setModalType] = useState("");
+  const [modalState, setModalState] = useState(false);
+  const [login, setLogin] = useState(false);
+  const [dataLogin, setDataLogin] = useState({});
+  const [contentVisible, setContentVisible] = useState(false); // nuevo estado
+  const [empresaID, setEmpresaID] = useState("");
+
+  const toggleMenu = (menu) => {
+    setOpenMenu(openMenu === menu ? null : menu);
+  };
 
   const modals = {
     pruebaModal: <PruebaModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />,
@@ -85,27 +84,54 @@ export default function PortalView() {
     };
   }, []);
 
+  // tiempo demora para mostrar form
+  useEffect(() => {
+    if (showLogin) {
+      // Esperamos que termine la transición de altura
+      const timeout = setTimeout(() => setContentVisible(true), 600);
+      return () => clearTimeout(timeout);
+    } else {
+      setContentVisible(false); // reiniciamos si se cierra
+      return;
+    }
+  }, [showLogin]);
+
+  useEffect(() => {
+    async function fetchEmpresaID() {
+      const id = await window.electron?.ipcRenderer?.invoke("get-initial-mode");
+
+      setEmpresaID(id.empresaID || "No registrado");
+    }
+
+    fetchEmpresaID();
+  }, []);
+
   function handleOpenModal() {
     setModalType("pruebaModal");
     setModalState(true);
   }
 
   const handleClose = () => {
-    console.log("Cerrar modal");
+    if (!login) {
+      setShowLogin(false);
+    }
+    if (login) {
+      setLogin(false);
+    }
   };
 
   return (
     <>
       {/* Card Container */}
-      <DraggableModal onClose={handleClose} width="800px">
+      <DraggableModal onClose={handleClose} withButton={showLogin ? true : false} width="700px">
         {/* Header */}
         <div className="relative bg-blue-900/90">
           <div
-            className={`flex items-center justify-center px-4 overflow-hidden transition-all duration-500 ease-in-out ${
+            className={`flex items-center justify-center px-4 overflow-hidden transition-all duration-700 ease-in-out ${
               showLogin ? "h-12" : "h-32"
             }`}
           >
-            <div className="flex flex-col items-center transition-opacity duration-500 ease-in-out">
+            <div className="flex flex-col items-center transition-opacity duration-1000 ease-in-out">
               <img
                 alt="logo"
                 src={logoNova}
@@ -120,7 +146,7 @@ export default function PortalView() {
           </div>
         </div>
         {/* Main Content */}
-        <div className="pt-1 relative border-x">
+        <div className="pt-1 relative">
           {!showLogin && (
             <div>
               {/* Title Section */}
@@ -134,15 +160,7 @@ export default function PortalView() {
               </div>
             </div>
           )}
-          {/* boton atras */}
-          {showLogin && (
-            <button
-              className="absolute left-0 bottom-0 bg-slate-600 px-2 pb-1 ml-4 text-2xl text-white font-semibold rounded transform -translate-y-1/2 cursor-pointer hover:bg-slate-700 transition z-10"
-              onClick={() => setShowLogin(false)}
-            >
-              &lt;
-            </button>
-          )}
+
           {/* Buttons - Solo se muestran si showLogin es false */}
           {!showLogin && (
             <div className="flex items-center justify-center gap-x-10 mb-6">
@@ -164,13 +182,14 @@ export default function PortalView() {
 
           {/* Login Form */}
           <div
-            className={` ${
-              showLogin ? "transition-all duration-500 ease-in-out h-[500px] opacity-100" : "h-0 opacity-0"
+            className={`${
+              showLogin ? "transition-all duration-700 ease-in-out h-[450px] opacity-100" : "h-0 opacity-0"
             } overflow-hidden`}
           >
             {showLogin && (
-              <div className="flex">
-                <div className="bg-gray-300 w-60 h-[500px] p-4 overflow-y-auto">
+              <div className={`flex transition-opacity duration-700 ${contentVisible ? "opacity-100" : "opacity-0"}`}>
+                {/* menu izquierdo */}
+                <div className="bg-gray-200 w-60 h-[450px] p-4 overflow-y-auto">
                   {menuItems.map((item, index) => (
                     <div key={index} className="mb-2">
                       <button
@@ -188,19 +207,22 @@ export default function PortalView() {
                       <div
                         className={`overflow-hidden transition-all duration-300 ease-in-out ${openMenu === item.name ? "max-h-40" : "max-h-0"}`}
                       >
-                        <div className="pl-4 pt-2 space-y-1">
+                        <div className="flex flex-col justify-center items-center gap-1 mt-1">
                           {item.subItems.map((subItem, index) => (
                             <ActionButton
                               text={subItem.text}
                               onClick={subItem.onClick}
                               key={index}
+                              addClassName="w-38"
                               icon={
                                 <img
                                   src={subItem.icon as string}
                                   alt={subItem.text?.toLowerCase()}
-                                  className={`h-6 w-6 drop-shadow-lg`}
+                                  className={`h-6 w-6 ml-0.5 ${!login ? "grayscale-100 opacity-60" : " drop-shadow-lg"}`}
                                 />
                               }
+                              color={`${!login ? "grayDeshab" : "gray"}`}
+                              disabled={!login}
                             />
                           ))}
                         </div>
@@ -208,8 +230,9 @@ export default function PortalView() {
                     </div>
                   ))}
                 </div>
-                <div className="w-full">
-                  <div className="flex items-center gap-2 h-12 w-full bg-gray-100 px-2">
+                <div className="w-full bg-white">
+                  {/* menu derecho superior */}
+                  {/* <div className="flex items-center gap-2 h-12 w-full bg-gray-100 px-2">
                     <ActionButton
                       onClick={() => handleOpenModal()}
                       icon={<img src={avatar as string} alt={"icon"} className={`h-6 w-6 drop-shadow-lg`} />}
@@ -218,8 +241,12 @@ export default function PortalView() {
                       onClick={() => handleOpenModal()}
                       icon={<img src={avatar as string} alt={"icon"} className={`h-6 w-6 drop-shadow-lg`} />}
                     />
-                  </div>
-                  {showLogin && <LoginForm />}
+                  </div> */}
+                  {showLogin && !login ? (
+                    <LoginForm setLogin={setLogin} setDataLogin={setDataLogin} empresaID={empresaID} />
+                  ) : login ? (
+                    <SelectPuntoVenta dataLogin={dataLogin} />
+                  ) : null}
                 </div>
               </div>
             )}
@@ -227,9 +254,7 @@ export default function PortalView() {
         </div>
 
         {/* Footer */}
-        <div
-          className={`text-center py-6 text-sm font-semibold text-gray-600 border-x border-b rounded-b-md ${showLogin && "hidden"}`}
-        >
+        <div className={`text-center py-6 text-sm font-semibold text-gray-600 rounded-b-md ${showLogin && "hidden"}`}>
           Email: soporte@novagestion.com.ar
         </div>
       </DraggableModal>

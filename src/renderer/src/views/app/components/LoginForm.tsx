@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 
-export default function LoginForm() {
+export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const initialValues = {
-    empresa: "",
+    empresa: String(Number(empresaID)),
     usuario: "",
     password: "",
   };
@@ -38,7 +38,12 @@ export default function LoginForm() {
       }, 3000);
     },
     onSuccess: (data) => {
-      //console.log(data);
+      if (data) {
+        setDataLogin(data);
+        setLogin(true);
+
+        console.log("login success");
+      }
 
       // localStorage.setItem("_u", String(data.USUARIO));
       // localStorage.setItem("_tu", String(data.TUSUARIO));
@@ -49,24 +54,21 @@ export default function LoginForm() {
       // localStorage.setItem('_dbp', data.dbnameprod);
       // localStorage.setItem('_dbd', data.dbnamedev);
 
-      window.electron.ipcRenderer.send("login-success");
-
+      // window.electron.ipcRenderer.send("login-success");
       // Establecer un retraso en la navegación
-      setTimeout(() => {
-        navigate("/home");
-      }, 1000);
+      // setTimeout(() => {
+      //   navigate("/home");
+      // }, 1000);
     },
   });
 
   const handleForm = (formData) => {
-    // console.log(formData);
-    // setLoading(true);
     mutate(formData);
   };
 
   useEffect(() => {
     // Poner el foco en el primer input cuando el componente se monta o al regresar
-    const firstInput = document.getElementById("empresa");
+    const firstInput = document.getElementById("usuario");
     if (firstInput) {
       firstInput.focus();
     }
@@ -81,7 +83,7 @@ export default function LoginForm() {
           if (isFormValid) {
             handleSubmit(handleForm)();
           } else {
-            document.getElementById("empresa")?.focus(); // Si el formulario no es válido, vuelve al inicio
+            document.getElementById("usuario")?.focus(); // Si el formulario no es válido, vuelve al inicio
           }
         }, 0);
       } else {
@@ -132,6 +134,7 @@ export default function LoginForm() {
               placeholder="N° de empresa"
               onKeyDown={(event) => goToNextInput(event, "usuario")}
               onFocus={handleFocus}
+              disabled
             />
           </div>
 

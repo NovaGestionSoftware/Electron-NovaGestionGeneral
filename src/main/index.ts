@@ -1,8 +1,9 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
+import { app, shell, BrowserWindow, ipcMain, dialog, Menu } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import Registry from "winreg";
+import { getFullMenu } from "./menu/fullMenu.js";
 
 function createWindow(): void {
   // Create the browser window.
@@ -15,6 +16,7 @@ function createWindow(): void {
     icon: join(__dirname, "./../../resources/novaico.ico"),
     ...(process.platform === "linux" ? { icon } : {}),
     webPreferences: {
+      webSecurity: false,
       preload: join(__dirname, "../preload/index.mjs"),
       sandbox: false,
     },
@@ -31,6 +33,10 @@ function createWindow(): void {
   mainWindow.on("ready-to-show", async () => {
     mainWindow.show();
   });
+
+  const fullMenu = getFullMenu(mainWindow);
+  Menu.setApplicationMenu(fullMenu);
+  mainWindow.setMenu(fullMenu);
 
   mainWindow.webContents.once("did-finish-load", async () => {
     const empresaID = await readEmpresaID();
@@ -56,6 +62,41 @@ function createWindow(): void {
 
     // ✔️  enviar al renderer cuando los listeners YA existen
     mainWindow.webContents.send(empresaID ? "show-login" : "show-registrar", empresaID ?? null);
+  });
+
+  // registrar empresa en editor de registro
+  ipcMain.on("registrar-empresa", async (event, empresaID) => {
+    const regKey = new Winreg({
+      hive: Winreg.HKLM,
+      key: "\\SOFTWARE\\NovaGestion",
+    });
+
+    regKey.set("EmpresaID", Winreg.REG_SZ, empresaID, (err) => {
+      if (err) {
+        console.error("Error al registrar empresa:", err);
+        dialog.showMessageBox({
+          type: "error",
+          title: "Error al registrar",
+          message: "No se pudo registrar la empresa. ¿Tienes permisos de administrador?",
+        });
+      } else {
+        console.log("Empresa registrada:", empresaID);
+        dialog.showMessageBox({
+          type: "info",
+          title: "Registro exitoso",
+          message: `Empresa registrada exitosamente: ${empresaID}`,
+        });
+
+        // Opcional: enviar al frontend que se registró correctamente
+        event.sender.send("registro-completo", empresaID);
+      }
+    });
+  });
+
+  // obtener numero empresa
+  ipcMain.handle("get-initial-mode", async () => {
+    const empresaID = await readEmpresaID();
+    return empresaID ? { mode: "login", empresaID } : { mode: "registrar", empresaID: null };
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

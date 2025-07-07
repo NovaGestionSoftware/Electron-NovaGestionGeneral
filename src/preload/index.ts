@@ -37,10 +37,3 @@ if (process.contextIsolated) {
   // @ts-ignore (define in dts)
   window.api = api;
 }
-
-contextBridge.exposeInMainWorld("electronAPI", {
-  showAlert: (message, type = "info", title = "Alerta") => {
-    // Valores por defecto
-    ipcRenderer.send("show-native-alert", { message, type, title });
-  },
-});
