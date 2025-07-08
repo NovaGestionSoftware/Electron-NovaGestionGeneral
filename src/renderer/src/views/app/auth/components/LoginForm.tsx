@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { loginEmpresa } from "@renderer/views/auth/services/UserService";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
+import { loginEmpresa } from "../services/UserService";
 
 export default function LoginForm() {
   const navigate = useNavigate();

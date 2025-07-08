@@ -6,8 +6,23 @@
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts"
   ],
+  "exclude": [
+  "src/renderer/src/frontend-resources/components/Inputs/Checkbox.tsx",
+  "src/renderer/src/frontend-resources/components/Inputs/RangeDatesInput.tsx",
+  "src/renderer/src/frontend-resources/components/Modales/ModalBase.tsx",
+  "src/renderer/src/frontend-resources/components/Modales/ModalFiltro.tsx",
+  "src/renderer/src/frontend-resources/components/Tables/Busqueda/BusquedaInputs.tsx",
+  "src/renderer/src/frontend-resources/components/Tables/TablaExpansible/TablaExpandible.tsx", //
+  "src/renderer/src/frontend-resources/components/Charts/GraficoConZoom.tsx", 
+  "src/renderer/src/frontend-resources/electron/components/Modales/modalesBusqueda/SearchClienteModal.tsx",
+  "src/renderer/src/frontend-resources/electron/components/Modales/modalStep2/MedioPagoModal.tsx",
+  "src/renderer/src/frontend-resources/electron/components/Modales/modalStep2/ParametrosFacturacionModal.tsx",
+  "src/renderer/src/frontend-resources/electron/components/Search/SearchFormVendedorCliente.tsx"
+],
   "compilerOptions": {
     "composite": true,
+    "noUnusedLocals": false, // Desactiva advertencias de variables no usadas
+    "noUnusedParameters": false, // Desactiva advertencias de parámetros no usados
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {

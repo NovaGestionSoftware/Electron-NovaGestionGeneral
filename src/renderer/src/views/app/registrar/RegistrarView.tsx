@@ -123,7 +123,7 @@ export default function RegistrarView() {
 
         {/* Botones */}
         <div className="flex flex-wrap justify-end gap-4">
-          <button className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700" onClick={registrar}>
+          <button className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 cursor-pointer" onClick={registrar}>
             Verificar
           </button>
           <button className="px-4 py-2 rounded bg-gray-200 text-sm hover:bg-gray-300">BD</button>

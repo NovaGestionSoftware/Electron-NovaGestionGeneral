@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import RegistrarView from "../app/registrar/RegistrarView";
 import PortalView from "../app/PortalView";
 import { ModalProvider } from "@renderer/frontend-resources/electron/components/Modales/context/ModalContext";
+import LoadingComponent from "@renderer/frontend-resources/electron/components/Loading/LoadingComponent";
 
 export default function Portal() {
   const [mode, setMode] = useState<"loading" | "registrar" | "login">("loading");
@@ -38,7 +39,13 @@ export default function Portal() {
   return (
     <ModalProvider>
       <div className="flex items-center justify-center h-screen bg-portal">
-        {mode === "loading" ? <p>Cargando...</p> : mode === "registrar" ? <RegistrarView /> : <PortalView />}
+        {mode === "loading" ? (
+          <LoadingComponent text="Cargando..." />
+        ) : mode === "registrar" ? (
+          <RegistrarView />
+        ) : (
+          <PortalView />
+        )}
       </div>
     </ModalProvider>
   );

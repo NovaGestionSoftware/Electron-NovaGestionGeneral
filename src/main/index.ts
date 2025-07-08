@@ -4,6 +4,10 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import Registry from "winreg";
 import { getFullMenu } from "./menu/fullMenu.js";
+import { spawn } from "child_process";
+import path from "path";
+
+const Winreg = require("winreg");
 
 function createWindow(): void {
   // Create the browser window.
@@ -52,12 +56,12 @@ function createWindow(): void {
       });
     } else {
       console.log("Empresa: ", empresaID);
-      await dialog.showMessageBox(mainWindow, {
-        type: "info",
-        title: "Empresa registrada",
-        message: `Empresa registrada: ${empresaID}`,
-        buttons: ["OK"],
-      });
+      // await dialog.showMessageBox(mainWindow, {
+      //   type: "info",
+      //   title: "Empresa registrada",
+      //   message: `Empresa registrada: ${empresaID}`,
+      //   buttons: ["OK"],
+      // });
     }
 
     // ✔️  enviar al renderer cuando los listeners YA existen
@@ -66,31 +70,37 @@ function createWindow(): void {
 
   // registrar empresa en editor de registro
   ipcMain.on("registrar-empresa", async (event, empresaID) => {
-    const regKey = new Winreg({
-      hive: Winreg.HKLM,
-      key: "\\SOFTWARE\\NovaGestion",
-    });
+    try {
+      const regKey = new Winreg({
+        hive: Winreg.HKLM,
+        key: "\\SOFTWARE\\NovaGestion",
+      });
 
-    regKey.set("EmpresaID", Winreg.REG_SZ, empresaID, (err) => {
-      if (err) {
-        console.error("Error al registrar empresa:", err);
-        dialog.showMessageBox({
-          type: "error",
-          title: "Error al registrar",
-          message: "No se pudo registrar la empresa. ¿Tienes permisos de administrador?",
-        });
-      } else {
-        console.log("Empresa registrada:", empresaID);
-        dialog.showMessageBox({
-          type: "info",
-          title: "Registro exitoso",
-          message: `Empresa registrada exitosamente: ${empresaID}`,
-        });
+      regKey.create((createErr) => {
+        if (createErr) {
+          throw createErr;
+        }
 
-        // Opcional: enviar al frontend que se registró correctamente
-        event.sender.send("registro-completo", empresaID);
-      }
-    });
+        regKey.set("EmpresaID", Winreg.REG_SZ, empresaID, (err) => {
+          if (err) throw err;
+
+          console.log("Empresa registrada:", empresaID);
+          dialog.showMessageBox({
+            type: "info",
+            title: "Registro exitoso",
+            message: `Empresa registrada exitosamente: ${empresaID}`,
+          });
+          event.sender.send("registro-completo", empresaID);
+        });
+      });
+    } catch (error: any) {
+      console.error("Error en registro:", error);
+      dialog.showMessageBox({
+        type: "error",
+        title: "Error",
+        message: `Ocurrió un error al registrar la empresa: ${error.message}`,
+      });
+    }
   });
 
   // obtener numero empresa
@@ -150,4 +160,36 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
+});
+
+// ejecutar app de gestion
+ipcMain.handle("launch-sistema-app", async (_event, dataLoginJson) => {
+  const isDev = process.env.NODE_ENV === "development";
+
+  const sistemaAppPath = isDev
+    ? path.join(__dirname, "..", "..", "..", "NovaClientes-Electron")
+    : path.join(process.resourcesPath, "NovaClientes-Electron", "novagestion 1.0.0.exe"); // o .app para mac
+
+  //console.log(otherAppPath);
+
+  const command = isDev ? (process.platform === "win32" ? "npm.cmd" : "npm") : sistemaAppPath;
+
+  const args = isDev ? ["run", "dev"] : [];
+
+  const env = { ...process.env, DATA_LOGIN: dataLoginJson };
+
+  const child = spawn(command, args, {
+    cwd: isDev ? sistemaAppPath : undefined,
+    shell: true,
+    detached: true,
+    stdio: "ignore", // o ['pipe', 'pipe', 'pipe'] si querés ver la salida
+    windowsHide: true, // <--- esta línea oculta la consola en Windows
+    env,
+  });
+
+  // console.log(env);
+
+  child.unref(); // para que el proceso siga corriendo incluso si se cierra Electron
+
+  return "OK";
 });

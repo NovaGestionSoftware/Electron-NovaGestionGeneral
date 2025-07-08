@@ -4,6 +4,7 @@ import { loginEmpresa } from "../auth/services/UserService";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
+import { CiUser } from "react-icons/ci";
 
 export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
 
   const initialValues = {
     empresa: String(Number(empresaID)),
-    usuario: "",
+    usuario: "nova",
     password: "",
   };
 
@@ -39,6 +40,7 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
     },
     onSuccess: (data) => {
       if (data) {
+        console.log(data);
         setDataLogin(data);
         setLogin(true);
 
@@ -108,78 +110,112 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
   return (
     <main className="flex items-center justify-center">
       <form
-        className="flex h-auto w-[20rem] flex-col items-center justify-center space-y-6 border-0 bg-transparent px-2 py-4"
+        className="relative flex h-auto w-full items-center justify-center space-y-6 border-0 bg-transparent px-2 py-4"
         onSubmit={handleSubmit(handleForm)}
         noValidate
       >
-        <div>
-          {/* Error Message */}
-          {error && (
-            <div
-              className="absolute w-2/4 bg-red-600 border-2 border-red-700 text-gray-300 text-center text-[10px] mb-2"
-              style={{ top: "150px", left: "50%", transform: "translateX(-50%)" }}
-            >
-              {error}
+        <div className="flex justify-center items-center h-48 w-48 shadow border border-gray-300 rounded-md">
+          <CiUser className="h-12 w-12" color="gray" />
+        </div>
+
+        <div className="p-4">
+          <div className="m-1">
+            {/* Error Message */}
+            {error && (
+              <div
+                className="absolute w-2/4 bg-red-600 border-2 border-red-700 text-gray-300 text-center text-[10px] mb-2"
+                style={{ top: "150px", left: "50%", transform: "translateX(-50%)" }}
+              >
+                {error}
+              </div>
+            )}
+            <div className="flex items-center mt-2 gap-2">
+              <label htmlFor="empresa" className="w-18 text-right block text-sm font-semibold">
+                Empresa
+              </label>
+              <input
+                id="empresa"
+                {...register("empresa", { required: true })}
+                className="mt-1 block w-48 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
+                type="number"
+                placeholder="N° de empresa"
+                onKeyDown={(event) => goToNextInput(event, "usuario")}
+                onFocus={handleFocus}
+                disabled
+              />
             </div>
-          )}
-          <div className="mt-2">
-            <label htmlFor="empresa" className="block text-sm font-semibold te">
-              Empresa
+
+            <div className="flex items-center mt-2 gap-2">
+              <label htmlFor="usuario" className="w-18 text-right block text-sm font-semibold">
+                Usuario
+              </label>
+              <select
+                id="usuario"
+                className="mt-1 block w-48 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
+                {...register("usuario", { required: true })}
+                onKeyDown={(event) => goToNextInput(event, "password")}
+                //defaultValue="nova"
+              >
+                <option value="nova">Admin</option>
+                <option value="pamela">Pamela Gonzalez</option>
+              </select>
+            </div>
+            <div className="flex items-center mt-2 gap-2">
+              <label htmlFor="password" className="block text-sm font-semibold ">
+                Contraseña
+              </label>
+              <input
+                id="password"
+                className="mt-1 block w-48 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
+                type="password"
+                placeholder="*************"
+                onKeyDown={(event) => goToNextInput(event, "submit")}
+                onKeyPress={handleKeyPress}
+                {...register("password", { required: true })}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className={`block py-2 mt-2 transform rounded border-[1px] px-6 font-bold tracking-wider text-white shadow-lg transition-all ${
+                loading
+                  ? "flex justify-center items-center bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 animate-gradient hover:bg-gradient-to-r hover:from-blue-400 hover:via-blue-500 hover:to-blue-600 cursor-progress"
+                  : isFormValid
+                    ? "bg-blue-800 border-blue-900/90 cursor-pointer hover:-translate-y-1 hover:border-blue-500 hover:bg-blue-500 focus:border-transparent focus:bg-blue-500 focus:outline-2 focus:outline-blue-500"
+                    : "bg-gray-400 border-gray-400 cursor-default" // Estilos para cuando el botón está deshabilitado
+              }`}
+              disabled={!isFormValid} // El botón se deshabilita si los campos no están completos
+            >
+              {loading ? <ClipLoader color="#fff" size={24} /> : "Ingresar"}
+            </button>
+          </div>
+        </div>
+        <div className="absolute left-4 -bottom-24 flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="cargo" className="block text-sm font-semibold">
+              Cargo
             </label>
             <input
-              id="empresa"
-              {...register("empresa", { required: true })}
-              className="mt-1 block w-full rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
-              type="number"
-              placeholder="N° de empresa"
-              onKeyDown={(event) => goToNextInput(event, "usuario")}
-              onFocus={handleFocus}
+              id="cargo"
+              className="block w-48 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
+              type="text"
               disabled
             />
           </div>
 
-          <div className="mt-2">
-            <label htmlFor="usuario" className="block text-sm font-semibold ">
-              Usuario
+          <div className="flex flex-col  mt-2 gap-2">
+            <label htmlFor="cargo" className="block text-sm font-semibold">
+              Nivel de usuario
             </label>
             <input
-              id="usuario"
-              className="mt-1 block w-full rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
+              id="nivelUsuario"
+              className="block w-48 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
               type="text"
-              placeholder="Nombre de Usuario"
-              onKeyDown={(event) => goToNextInput(event, "password")}
-              {...register("usuario", { required: true })}
-            />
-          </div>
-          <div className="mt-2">
-            <label htmlFor="password" className="block text-sm font-semibold ">
-              Contraseña
-            </label>
-            <input
-              id="password"
-              className="mt-1 block w-full rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
-              type="password"
-              placeholder="*************"
-              onKeyDown={(event) => goToNextInput(event, "submit")}
-              onKeyPress={handleKeyPress}
-              {...register("password", { required: true })}
+              disabled
             />
           </div>
         </div>
-
-        <button
-          type="submit"
-          className={`block w-3/4 py-3 transform rounded border-[1px] px-4 font-bold tracking-wider text-white shadow-lg transition-all ${
-            loading
-              ? "flex justify-center items-center bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 animate-gradient hover:bg-gradient-to-r hover:from-blue-400 hover:via-blue-500 hover:to-blue-600 cursor-progress"
-              : isFormValid
-                ? "bg-emerald-700 border-emerald-700 cursor-pointer hover:-translate-y-1 hover:border-blue-500 hover:bg-blue-500 focus:border-transparent focus:bg-blue-500 focus:outline-2 focus:outline-blue-500"
-                : "bg-gray-400 border-gray-400 cursor-default" // Estilos para cuando el botón está deshabilitado
-          }`}
-          disabled={!isFormValid} // El botón se deshabilita si los campos no están completos
-        >
-          {loading ? <ClipLoader color="#fff" size={24} /> : "Ingresar"}
-        </button>
       </form>
     </main>
   );

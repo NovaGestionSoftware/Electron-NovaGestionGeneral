@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import logoNova from "@renderer/assets/novaicon2-256.png";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
-import { ActionButton } from "@renderer/frontend-resources/components";
+import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
 import { avatar, key, usuarios } from "@renderer/frontend-resources/assets/icons";
 import PruebaModal from "./modales/PruebaModal";
 import LoginForm from "./components/LoginForm";
 import SelectPuntoVenta from "./components/SelectPuntoVenta";
+import { IoSearchSharp } from "react-icons/io5";
+
+interface DataLogin {
+  empresa?: string;
+  nfantasia?: string;
+}
 
 export default function PortalView() {
   const menuItems = [
@@ -50,7 +56,10 @@ export default function PortalView() {
   const [modalType, setModalType] = useState("");
   const [modalState, setModalState] = useState(false);
   const [login, setLogin] = useState(false);
-  const [dataLogin, setDataLogin] = useState({});
+  const [dataLogin, setDataLogin] = useState<DataLogin>({
+    empresa: "",
+    nfantasia: "",
+  });
   const [contentVisible, setContentVisible] = useState(false); // nuevo estado
   const [empresaID, setEmpresaID] = useState("");
 
@@ -123,7 +132,7 @@ export default function PortalView() {
   return (
     <>
       {/* Card Container */}
-      <DraggableModal onClose={handleClose} withButton={showLogin ? true : false} width="700px">
+      <DraggableModal onClose={handleClose} withButton={showLogin ? true : false} width="740px">
         {/* Header */}
         <div className="relative bg-blue-900/90">
           <div
@@ -142,6 +151,11 @@ export default function PortalView() {
           : "top-1/2 left-1/2 w-[150px] h-[150px] -translate-x-1/2 -translate-y-1/2" // centrado
       }`}
               />
+              <div
+                className={`absolute top-2 left-20 text-center transition-opacity duration-700 ${!showLogin && "hidden"} ${contentVisible ? "opacity-100" : "opacity-0"}`}
+              >
+                <h2 className="text-xl font-semibold text-white">Sistema Integrado Administración y Ventas</h2>
+              </div>
             </div>
           </div>
         </div>
@@ -194,7 +208,7 @@ export default function PortalView() {
                     <div key={index} className="mb-2">
                       <button
                         onClick={() => toggleMenu(item.name)}
-                        className="w-full py-2 px-4 bg-gray-400 hover:bg-gray-500 rounded-md text-left flex justify-between items-center transition-colors  cursor-pointer"
+                        className="w-full py-2 px-3 bg-blue-800/90 hover:bg-blue-900 text-white rounded-md text-left flex justify-between items-center transition-colors cursor-pointer"
                       >
                         {item.name}
                         <span
@@ -213,12 +227,12 @@ export default function PortalView() {
                               text={subItem.text}
                               onClick={subItem.onClick}
                               key={index}
-                              addClassName="w-38"
+                              addClassName="w-38 flex justify-start"
                               icon={
                                 <img
                                   src={subItem.icon as string}
                                   alt={subItem.text?.toLowerCase()}
-                                  className={`h-6 w-6 ml-0.5 ${!login ? "grayscale-100 opacity-60" : " drop-shadow-lg"}`}
+                                  className={`h-6 w-6 mr-1 ${!login ? "grayscale-100 opacity-60" : " drop-shadow-lg"}`}
                                 />
                               }
                               color={`${!login ? "grayDeshab" : "gray"}`}
