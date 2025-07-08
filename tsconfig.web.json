@@ -12,12 +12,8 @@
   "src/renderer/src/frontend-resources/components/Modales/ModalBase.tsx",
   "src/renderer/src/frontend-resources/components/Modales/ModalFiltro.tsx",
   "src/renderer/src/frontend-resources/components/Tables/Busqueda/BusquedaInputs.tsx",
-  "src/renderer/src/frontend-resources/components/Tables/TablaExpansible/TablaExpandible.tsx", //
-  "src/renderer/src/frontend-resources/components/Charts/GraficoConZoom.tsx", 
-  "src/renderer/src/frontend-resources/electron/components/Modales/modalesBusqueda/SearchClienteModal.tsx",
-  "src/renderer/src/frontend-resources/electron/components/Modales/modalStep2/MedioPagoModal.tsx",
-  "src/renderer/src/frontend-resources/electron/components/Modales/modalStep2/ParametrosFacturacionModal.tsx",
-  "src/renderer/src/frontend-resources/electron/components/Search/SearchFormVendedorCliente.tsx"
+  "src/renderer/src/frontend-resources/components/Tables/TablaExpansible/TablaExpandible.tsx",
+  "src/renderer/src/frontend-resources/components/Charts/GraficoConZoom.tsx"
 ],
   "compilerOptions": {
     "composite": true,
