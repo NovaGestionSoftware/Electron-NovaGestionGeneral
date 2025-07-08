@@ -168,11 +168,11 @@ ipcMain.handle("launch-sistema-app", async (_event, dataLoginJson) => {
 
   const sistemaAppPath = isDev
     ? path.join(__dirname, "..", "..", "..", "NovaClientes-Electron")
-    : path.join(process.resourcesPath, "NovaClientes-Electron", "novagestion 1.0.0.exe"); // o .app para mac
+    : path.join(path.dirname(process.execPath), "..", "NovaClientes-Electron", "novagestion.exe");
 
-  //console.log(otherAppPath);
+  console.log(sistemaAppPath);
 
-  const command = isDev ? (process.platform === "win32" ? "npm.cmd" : "npm") : sistemaAppPath;
+  const command = isDev ? (process.platform === "win32" ? "npm.cmd" : "npm") : `"${sistemaAppPath}"`; // comillas por si hay espacios
 
   const args = isDev ? ["run", "dev"] : [];
 
@@ -182,12 +182,10 @@ ipcMain.handle("launch-sistema-app", async (_event, dataLoginJson) => {
     cwd: isDev ? sistemaAppPath : undefined,
     shell: true,
     detached: true,
-    stdio: "ignore", // o ['pipe', 'pipe', 'pipe'] si querés ver la salida
-    windowsHide: true, // <--- esta línea oculta la consola en Windows
+    stdio: "ignore",
+    windowsHide: false, // <--- esta línea oculta la consola en Windows
     env,
   });
-
-  // console.log(env);
 
   child.unref(); // para que el proceso siga corriendo incluso si se cierra Electron
 
