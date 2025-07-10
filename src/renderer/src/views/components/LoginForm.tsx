@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { loginEmpresa } from "../auth/services/UserService";
+import { loginEmpresa } from "../app/auth/services/UserService";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
@@ -32,8 +32,13 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
     mutationFn: loginEmpresa,
     onError: (error) => {
       console.log(error.message);
-      setLoading(false);
-      setError("Hubo un error. Revisa tus credenciales");
+      window?.electron?.ipcRenderer?.invoke("show-native-alert", {
+        type: "error",
+        title: "Sistema de Ventas",
+        message: "El usuario o la contraseña no son correctos. Inténtalo de nuevo.",
+      });
+       setLoading(false);
+      // setError("Hubo un error. Revisa tus credenciales");
       setTimeout(() => {
         setError("");
       }, 3000);
@@ -108,18 +113,19 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
   };
 
   return (
-    <main className="flex items-center justify-center">
+    <main className="flex items-center justify-center mt-6">
       <form
         className="relative flex h-auto w-full items-center justify-center space-y-6 border-0 bg-transparent px-2 py-4"
         onSubmit={handleSubmit(handleForm)}
         noValidate
       >
+        {/* imagen */}
         <div className="flex justify-center items-center h-48 w-48 shadow border border-gray-300 rounded-md">
           <CiUser className="h-12 w-12" color="gray" />
         </div>
 
         <div className="p-4">
-          <div className="m-1">
+          <div className="m-1 space-y-3">
             {/* Error Message */}
             {error && (
               <div
@@ -191,26 +197,26 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
             </button>
           </div>
         </div>
-        <div className="absolute left-4 -bottom-24 flex flex-col gap-2">
+        <div className="absolute left-2 -bottom-12 flex justify-center items-center gap-2">
           <div className="flex flex-col gap-2">
             <label htmlFor="cargo" className="block text-sm font-semibold">
               Cargo
             </label>
             <input
               id="cargo"
-              className="block w-48 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
+              className="block w-62 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
               type="text"
               disabled
             />
           </div>
 
-          <div className="flex flex-col  mt-2 gap-2">
+          <div className="flex flex-col gap-2">
             <label htmlFor="cargo" className="block text-sm font-semibold">
               Nivel de usuario
             </label>
             <input
               id="nivelUsuario"
-              className="block w-48 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
+              className="block w-62 rounded border bg-gray-50 px-2 py-1 text-gray-600 shadow-lg outline-gray-600 placeholder:text-sm focus:border-transparent focus:ring-0 focus:outline-2 focus:outline-sky-500"
               type="text"
               disabled
             />

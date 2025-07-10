@@ -1,12 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import logoNova from "@renderer/assets/novaicon2-256.png";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
 import { avatar, key, usuarios } from "@renderer/frontend-resources/assets/icons";
-import PruebaModal from "./modales/PruebaModal";
-import LoginForm from "./components/LoginForm";
-import SelectPuntoVenta from "./components/SelectPuntoVenta";
-import { IoSearchSharp } from "react-icons/io5";
+import PruebaModal from "./modales/ConfigPcModal";
+import LoginForm from "../components/LoginForm";
+import SelectPuntoVenta from "../components/SelectPuntoVenta";
+import ConfiguracionAccesosModal from "./modales/configuracionAccesos/ConfiguracionAccesosModal";
+import UsuariosModal from "./modales/UsuariosModal";
+import CategoriasModal from "./modales/CategoriasModal";
+import PasswordModal from "./modales/PasswordModal";
+import AtributosCategoriasModal from "./modales/AtributosCategoriasModal";
+import EnvSucModal from "./modales/EnvSucModal";
+import NodosModal from "./modales/NodosModal";
+import EmpresasModal from "./modales/EmpresasModal";
+import RespaldarModal from "./modales/RespaldarModal";
+import RegistrarModal from "./modales/RegistrarModal";
+import ConfigPcModal from "./modales/ConfigPcModal";
 
 interface DataLogin {
   empresa?: string;
@@ -18,35 +28,35 @@ export default function PortalView() {
     {
       name: "Usuario",
       subItems: [
-        { text: "Usuarios", icon: avatar, onClick: () => handleOpenModal() },
-        { text: "Categorías", icon: usuarios, onClick: () => handleOpenModal() },
-        { text: "Passwords", icon: key, onClick: () => handleOpenModal() },
+        { text: "Usuarios", icon: avatar, onClick: () => handleOpenModal("usuariosModal") },
+        { text: "Categorías", icon: usuarios, onClick: () => handleOpenModal("categoriasModal") },
+        { text: "Passwords", icon: key, onClick: () => handleOpenModal("passwordModal") },
       ],
     },
     {
       name: "Atributos",
       subItems: [
-        { text: "Usuarios", icon: avatar, onClick: () => handleOpenModal() },
-        { text: "Categorías", icon: usuarios, onClick: () => handleOpenModal() },
-        { text: "Env. Suc.", icon: key, onClick: () => handleOpenModal() },
+        { text: "Usuarios", icon: avatar, onClick: () => handleOpenModal("configuracionAccesosModal") },
+        { text: "Categorías", icon: usuarios, onClick: () => handleOpenModal("atributosCategoriasModal") },
+        { text: "Env. Suc.", icon: key, onClick: () => handleOpenModal("envSucModal") },
       ],
     },
     {
       name: "Empresas",
       subItems: [
-        { text: "Empresas", icon: avatar, onClick: () => handleOpenModal() },
-        { text: "Nodos", icon: usuarios, onClick: () => handleOpenModal() },
+        { text: "Empresas", icon: avatar, onClick: () => handleOpenModal("empresasModal") },
+        { text: "Nodos", icon: usuarios, onClick: () => handleOpenModal("nodosModal") },
       ],
     },
     {
       name: "Mantenimiento",
-      subItems: [{ text: "Respaldar", icon: avatar, onClick: () => handleOpenModal() }],
+      subItems: [{ text: "Respaldar", icon: avatar, onClick: () => handleOpenModal("respaldarModal") }],
     },
     {
       name: "Utilidades",
       subItems: [
-        { text: "Registrar", icon: avatar, onClick: () => handleOpenModal() },
-        { text: "Config. PC", icon: usuarios, onClick: () => handleOpenModal() },
+        { text: "Registrar", icon: avatar, onClick: () => handleOpenModal("registrarModal") },
+        { text: "Config. PC", icon: usuarios, onClick: () => handleOpenModal("configPcModal") },
       ],
     },
   ];
@@ -63,13 +73,56 @@ export default function PortalView() {
   const [contentVisible, setContentVisible] = useState(false); // nuevo estado
   const [empresaID, setEmpresaID] = useState("");
 
+  const iniciarSesionButtonRef = useRef<HTMLButtonElement>(null);
+
   const toggleMenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
 
   const modals = {
-    pruebaModal: <PruebaModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />,
+    // usuarios
+    usuariosModal: (
+      <UsuariosModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    categoriasModal: (
+      <CategoriasModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    passwordModal: (
+      <PasswordModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    // atributos
+    configuracionAccesosModal: (
+      <ConfiguracionAccesosModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    atributosCategoriasModal: (
+      <AtributosCategoriasModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    envSucModal: <EnvSucModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />,
+    // empresas
+    empresasModal: (
+      <EmpresasModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    nodosModal: <NodosModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />,
+
+    // mantenimiento
+    respaldarModal: (
+      <RespaldarModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    // utilidades
+
+    registrarModal: (
+      <RegistrarModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    configPcModal: (
+      <ConfigPcModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
+    ),
+    // pruebaModal: <PruebaModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />,
   };
+
+  useEffect(() => {
+    // Poner el foco en el primer input cuando el componente se monta o al regresar
+    iniciarSesionButtonRef?.current?.focus();
+  }, []);
 
   useEffect(() => {
     // Función para manejar el atajo de teclado
@@ -93,7 +146,7 @@ export default function PortalView() {
     };
   }, []);
 
-  // tiempo demora para mostrar form
+  // tiempo demora para mostrar form y efecto
   useEffect(() => {
     if (showLogin) {
       // Esperamos que termine la transición de altura
@@ -115,8 +168,8 @@ export default function PortalView() {
     fetchEmpresaID();
   }, []);
 
-  function handleOpenModal() {
-    setModalType("pruebaModal");
+  function handleOpenModal(name?: string) {
+    setModalType(name ? name : "pruebaModal");
     setModalState(true);
   }
 
@@ -182,6 +235,7 @@ export default function PortalView() {
                 <button
                   className="w-40 px-3 py-1.5  cursor-pointer rounded-xs bg-indigo-600  font-normal text-white text-sm shadow-md transition-all duration-300 hover:bg-indigo-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   onClick={() => setShowLogin(true)}
+                  ref={iniciarSesionButtonRef}
                 >
                   <span className="underline">I</span>niciar sesión
                 </button>

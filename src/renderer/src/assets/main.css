@@ -1,6 +1,13 @@
 /* @import './base.css'; */
 @import "tailwindcss";
 
+@theme {
+  --breakpoint-md: 1440px;
+  --breakpoint-lg: 1536px;
+  --breakpoint-xl: 1920px;
+}
+
+
 .bg-portal {
   background: linear-gradient(to right, #79afec, #1e40af);
 }

@@ -14,7 +14,7 @@ export default function SelectPuntoVenta({ dataLogin }) {
       .then(() => {
         setTimeout(() => {
           setLoading(false);
-        }, 4000);
+        }, 3000);
       })
       .catch((err) => {
         console.error("Error al lanzar app", err);

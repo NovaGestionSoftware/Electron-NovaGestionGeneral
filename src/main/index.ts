@@ -168,13 +168,15 @@ ipcMain.handle("launch-sistema-app", async (_event, dataLoginJson) => {
 
   const sistemaAppPath = isDev
     ? path.join(__dirname, "..", "..", "..", "NovaClientes-Electron")
-    : path.join(path.dirname(process.execPath), "..", "NovaClientes-Electron", "novagestion.exe");
+    : path.join(path.dirname(process.execPath), "..", "Novasistema", "novagestion.exe");
 
   console.log(sistemaAppPath);
 
   const command = isDev ? (process.platform === "win32" ? "npm.cmd" : "npm") : `"${sistemaAppPath}"`; // comillas por si hay espacios
 
-  const args = isDev ? ["run", "dev"] : [];
+  // const args = isDev ? ["run", "dev"] : [];
+
+  const args = isDev ? ["run", "dev"] : ["/c", "start", '"NovaGestion"', "/B", `"${sistemaAppPath}"`];
 
   const env = { ...process.env, DATA_LOGIN: dataLoginJson };
 
@@ -190,4 +192,20 @@ ipcMain.handle("launch-sistema-app", async (_event, dataLoginJson) => {
   child.unref(); // para que el proceso siga corriendo incluso si se cierra Electron
 
   return "OK";
+});
+
+ipcMain.handle("show-native-alert", async (_event, options) => {
+  const { type, title, message, buttons, defaultId, cancelId } = options;
+
+  const result = await dialog.showMessageBox({
+    type: type || "info",
+    title: title || "Confirmación",
+    message: message || "",
+    buttons: buttons || ["Aceptar"],
+    defaultId: defaultId ?? 0,
+    cancelId: cancelId ?? 1,
+    noLink: true, // Mejora visual en Windows
+  });
+
+  return result; // Contiene { response: indexDelBotonPresionado }
 });

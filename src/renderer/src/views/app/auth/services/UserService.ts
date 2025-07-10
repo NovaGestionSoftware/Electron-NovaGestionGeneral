@@ -15,7 +15,8 @@ export async function loginEmpresa(formData) {
 
     return data;
   } catch (error) {
-    console.log(error);
+    console.log("❌ Error en loginEmpresa:", error);
+    throw error; // 🔥 Esto activa onError en useMutation
   }
 }
 

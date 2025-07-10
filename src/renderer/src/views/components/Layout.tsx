@@ -39,13 +39,7 @@ export default function Portal() {
   return (
     <ModalProvider>
       <div className="flex items-center justify-center h-screen bg-portal">
-        {mode === "loading" ? (
-          <LoadingComponent text="Cargando..." />
-        ) : mode === "registrar" ? (
-          <RegistrarView />
-        ) : (
-          <PortalView />
-        )}
+        {mode === "loading" ? <p></p> : mode === "registrar" ? <RegistrarView /> : <PortalView />}
       </div>
     </ModalProvider>
   );
