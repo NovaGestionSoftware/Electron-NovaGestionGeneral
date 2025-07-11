@@ -28,6 +28,17 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
 
   const isFormValid = isDirty && isValid && !loading;
 
+  const userOptions = [
+    {
+      value: "nova",
+      userName: "Admin",
+    },
+    {
+      value: "pamela",
+      userName: "Pamela Gonzalez",
+    },
+  ];
+
   const { mutate } = useMutation({
     mutationFn: loginEmpresa,
     onError: (error) => {
@@ -37,7 +48,7 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
         title: "Sistema de Ventas",
         message: "El usuario o la contraseña no son correctos. Inténtalo de nuevo.",
       });
-       setLoading(false);
+      setLoading(false);
       // setError("Hubo un error. Revisa tus credenciales");
       setTimeout(() => {
         setError("");
@@ -115,13 +126,15 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
   return (
     <main className="flex items-center justify-center mt-6">
       <form
-        className="relative flex h-auto w-full items-center justify-center space-y-6 border-0 bg-transparent px-2 py-4"
+        className="relative flex h-auto w-full justify-center space-y-6 border-0 bg-transparent px-2"
         onSubmit={handleSubmit(handleForm)}
         noValidate
       >
         {/* imagen */}
-        <div className="flex justify-center items-center h-48 w-48 shadow border border-gray-300 rounded-md">
-          <CiUser className="h-12 w-12" color="gray" />
+        <div className="mt-4">
+          <div className="flex justify-center items-center h-40 w-40 shadow border border-gray-300 rounded-md">
+            <CiUser className="h-12 w-12" color="gray" />
+          </div>
         </div>
 
         <div className="p-4">
@@ -162,8 +175,9 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
                 onKeyDown={(event) => goToNextInput(event, "password")}
                 //defaultValue="nova"
               >
-                <option value="nova">Admin</option>
-                <option value="pamela">Pamela Gonzalez</option>
+                {userOptions.map((user) => (
+                  <option value={user.value}>{user?.userName}</option>
+                ))}
               </select>
             </div>
             <div className="flex items-center mt-2 gap-2">
@@ -181,17 +195,17 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
               />
             </div>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className={`block py-2 mt-2 transform rounded border-[1px] px-6 font-bold tracking-wider text-white shadow-lg transition-all ${
+              className={`w-48 py-2 rounded-lg font-semibold text-white shadow-md transition-all cursor-pointer ${
                 loading
-                  ? "flex justify-center items-center bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 animate-gradient hover:bg-gradient-to-r hover:from-blue-400 hover:via-blue-500 hover:to-blue-600 cursor-progress"
+                  ? "flex justify-center items-center bg-gradient-to-r from-blue-400 to-blue-600"
                   : isFormValid
-                    ? "bg-blue-800 border-blue-900/90 cursor-pointer hover:-translate-y-1 hover:border-blue-500 hover:bg-blue-500 focus:border-transparent focus:bg-blue-500 focus:outline-2 focus:outline-blue-500"
-                    : "bg-gray-400 border-gray-400 cursor-default" // Estilos para cuando el botón está deshabilitado
+                    ? "bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 transform hover:-translate-y-0.5"
+                    : "bg-gray-400 cursor-not-allowed"
               }`}
-              disabled={!isFormValid} // El botón se deshabilita si los campos no están completos
+              disabled={!isFormValid}
             >
               {loading ? <ClipLoader color="#fff" size={24} /> : "Ingresar"}
             </button>

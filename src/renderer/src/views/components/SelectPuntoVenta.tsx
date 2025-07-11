@@ -1,23 +1,44 @@
 import { shoppingCart } from "@renderer/frontend-resources/assets/icons";
 import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
 import LoadingComponent from "@renderer/frontend-resources/electron/components/Loading/LoadingComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 
 export default function SelectPuntoVenta({ dataLogin }) {
   const [loading, setLoading] = useState(false);
+  const [readyTimeout, setReadyTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const handleReady = () => {
+      console.log("✅ App secundaria lista");
+      setLoading(false);
+      if (readyTimeout) clearTimeout(readyTimeout);
+    };
+
+    window.electron?.ipcRenderer?.on("sistema-ready", handleReady);
+
+    return () => {
+      window.electron?.ipcRenderer?.removeAllListeners("sistema-ready");
+      if (readyTimeout) clearTimeout(readyTimeout);
+    };
+  }, []);
 
   const handleLaunchApp = () => {
-    setLoading(true);
     window.electron?.ipcRenderer
       ?.invoke("launch-sistema-app", JSON.stringify(dataLogin))
       .then(() => {
-        setTimeout(() => {
+        setLoading(true);
+
+        // Si no llega 'READY' en 10 segundos, desactivamos el loading
+        const timeout = setTimeout(() => {
+          console.warn("⚠️ No se recibió 'READY' en tiempo esperado");
           setLoading(false);
-        }, 3000);
+        }, 20000);
+
+        setReadyTimeout(timeout);
       })
       .catch((err) => {
-        console.error("Error al lanzar app", err);
+        console.error("Error al lanzar app:", err);
         setLoading(false);
       });
   };

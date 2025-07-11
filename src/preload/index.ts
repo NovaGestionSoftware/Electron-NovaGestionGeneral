@@ -18,6 +18,7 @@ const ipc = {
     ipcRenderer.removeListener(channel, listener),
   send: (channel: string, ...args: any[]) => ipcRenderer.send(channel, ...args),
   invoke: (channel: string, ...args: any[]) => ipcRenderer.invoke(channel, ...args),
+  removeAllListeners: (channel: string) => ipcRenderer.removeAllListeners(channel),
 };
 
 // Usar contextBridge para exponer APIs

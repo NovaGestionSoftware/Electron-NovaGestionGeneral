@@ -178,7 +178,20 @@ export default function PortalView() {
       setShowLogin(false);
     }
     if (login) {
-      setLogin(false);
+      window?.electron?.ipcRenderer
+        ?.invoke("show-native-alert", {
+          type: "warning",
+          title: "¿Estas seguro?",
+          message: "¿Estas seguro? La sesión se cerrara.",
+          buttons: ["Sí, salir", "Cancelar"],
+          defaultId: 0,
+          cancelId: 1,
+        })
+        .then((result) => {
+          if (result?.response === 0) {
+            setLogin(false);
+          }
+        });
     }
   };
 
@@ -241,7 +254,10 @@ export default function PortalView() {
                 </button>
               </div>
               <div className="border rounded-sm pl-[1px] pt-[0.5px] pb-[1px] pr-[2px]">
-                <button className="w-40 px-3 py-1.5 cursor-pointer rounded-xs bg-gray-600  font-normal text-white text-sm shadow-md transition-all duration-300 hover:bg-gray-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+                <button
+                  onClick={() => window?.electron?.ipcRenderer?.send("close-app")}
+                  className="w-40 px-3 py-1.5 cursor-pointer rounded-xs bg-gray-600  font-normal text-white text-sm shadow-md transition-all duration-300 hover:bg-gray-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                >
                   <span className="underline">S</span>alir
                 </button>
               </div>
@@ -257,12 +273,12 @@ export default function PortalView() {
             {showLogin && (
               <div className={`flex transition-opacity duration-700 ${contentVisible ? "opacity-100" : "opacity-0"}`}>
                 {/* menu izquierdo */}
-                <div className="bg-gray-200 w-60 h-[450px] p-4 overflow-y-auto">
+                <div className="bg-gray-200 w-60 h-[450px] p-2 overflow-y-auto">
                   {menuItems.map((item, index) => (
                     <div key={index} className="mb-2">
                       <button
                         onClick={() => toggleMenu(item.name)}
-                        className="w-full py-2 px-3 bg-blue-800/90 hover:bg-blue-900 text-white rounded-md text-left flex justify-between items-center transition-colors cursor-pointer"
+                        className="w-full py-2 px-3 bg-gray-800/90 hover:bg-gray-900 text-white rounded-md text-left flex justify-between items-center transition-colors cursor-pointer"
                       >
                         {item.name}
                         <span

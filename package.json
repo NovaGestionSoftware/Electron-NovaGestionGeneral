@@ -29,8 +29,7 @@
         "nsis",
         "portable"
       ],
-      "icon": "resources/novaico.ico",
-      "requestedExecutionLevel": "requireAdministrator"
+      "icon": "resources/novaico.ico"
     },
     "nsis": {
       "installerIcon": "resources/novaico.ico",

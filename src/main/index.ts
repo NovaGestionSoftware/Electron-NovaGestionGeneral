@@ -6,10 +6,13 @@ import Registry from "winreg";
 import { getFullMenu } from "./menu/fullMenu.js";
 import { spawn } from "child_process";
 import path from "path";
+import * as net from "net";
 
 const Winreg = require("winreg");
 
 function createWindow(): void {
+  // 1. Ventana de splash
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     minWidth: 1366,
@@ -26,21 +29,16 @@ function createWindow(): void {
     },
   });
 
-  // Maximiza la ventana
-  mainWindow.maximize();
-
   // Mostrar la ventana cuando esté lista
+  // Cuando la ventana principal esté lista
   mainWindow.once("ready-to-show", () => {
-    mainWindow.show();
+    // Mostrar la ventana principal
+    mainWindow?.maximize();
+    mainWindow?.show();
+    const fullMenu = getFullMenu(mainWindow);
+    Menu.setApplicationMenu(fullMenu);
+    mainWindow.setMenu(fullMenu);
   });
-
-  mainWindow.on("ready-to-show", async () => {
-    mainWindow.show();
-  });
-
-  const fullMenu = getFullMenu(mainWindow);
-  Menu.setApplicationMenu(fullMenu);
-  mainWindow.setMenu(fullMenu);
 
   mainWindow.webContents.once("did-finish-load", async () => {
     const empresaID = await readEmpresaID();
@@ -70,38 +68,53 @@ function createWindow(): void {
 
   // registrar empresa en editor de registro
   ipcMain.on("registrar-empresa", async (event, empresaID) => {
-    try {
-      const regKey = new Winreg({
-        hive: Winreg.HKLM,
-        key: "\\SOFTWARE\\NovaGestion",
-      });
+    const regKey = new Winreg({
+      hive: Winreg.HKLM,
+      key: "\\SOFTWARE\\NovaGestion",
+    });
 
-      regKey.create((createErr) => {
-        if (createErr) {
-          throw createErr;
+    regKey.create((createErr) => {
+      if (createErr) {
+        handleRegistryError(createErr, event);
+        return;
+      }
+
+      regKey.set("EmpresaID", Winreg.REG_SZ, empresaID, (err) => {
+        if (err) {
+          handleRegistryError(err, event);
+          return;
         }
 
-        regKey.set("EmpresaID", Winreg.REG_SZ, empresaID, (err) => {
-          if (err) throw err;
-
-          console.log("Empresa registrada:", empresaID);
-          dialog.showMessageBox({
-            type: "info",
-            title: "Registro exitoso",
-            message: `Empresa registrada exitosamente: ${empresaID}`,
-          });
-          event.sender.send("registro-completo", empresaID);
+        console.log("Empresa registrada:", empresaID);
+        dialog.showMessageBox({
+          type: "info",
+          title: "Registro exitoso",
+          message: `Empresa registrada exitosamente: ${empresaID}`,
         });
+        event.sender.send("registro-completo", empresaID);
       });
-    } catch (error: any) {
-      console.error("Error en registro:", error);
-      dialog.showMessageBox({
-        type: "error",
-        title: "Error",
-        message: `Ocurrió un error al registrar la empresa: ${error.message}`,
-      });
-    }
+    });
   });
+
+  // Función auxiliar para mostrar un mensaje específico si no se tiene permisos
+  function handleRegistryError(error: any, event: Electron.IpcMainEvent) {
+    console.error("Error en registro:", error);
+
+    const isPermissionError = error.code === "EACCES" || error.code === "EPERM";
+
+    dialog.showMessageBox({
+      type: "error",
+      title: "Error",
+      message: isPermissionError
+        ? `Ocurrió un error al registrar la empresa: ${error.message}`
+        : "No se pudo registrar la empresa porque la aplicación no tiene permisos de administrador. Por favor, ejecútela como administrador.",
+    });
+
+    event.sender.send("registro-error", {
+      message: error.message,
+      code: error.code,
+    });
+  }
 
   // obtener numero empresa
   ipcMain.handle("get-initial-mode", async () => {
@@ -136,6 +149,21 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
+
+  // server tcp para recibir mensaje que la otra app esta lista.
+  const server = net.createServer((socket) => {
+    socket.on("data", (data) => {
+      const message = data.toString().trim();
+      console.log("Mensaje recibido:", message);
+
+      if (message === "READY") {
+        mainWindow?.webContents.send("sistema-ready");
+      }
+    });
+  });
+  server.listen(8124, () => {
+    console.log("Servidor TCP escuchando en el puerto 8124");
+  });
 }
 
 app.whenReady().then(() => {
@@ -208,4 +236,9 @@ ipcMain.handle("show-native-alert", async (_event, options) => {
   });
 
   return result; // Contiene { response: indexDelBotonPresionado }
+});
+
+// Cierra completamente la aplicación
+ipcMain.on("close-app", () => {
+  app.quit();
 });

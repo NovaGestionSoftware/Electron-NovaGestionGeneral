@@ -8,8 +8,14 @@ export default function RegistrarView() {
   const handleClose = () => {};
 
   const registrar = () => {
-    if (!empresaID.trim()) return alert("Ingresa un número válido");
+    if (!empresaID.trim())
+      return window?.electron?.ipcRenderer?.invoke("show-native-alert", {
+        type: "error",
+        title: "Sistema de Ventas",
+        message: "Ingresa un número válido.",
+      });
     window.electron.ipcRenderer.send("registrar-empresa", empresaID);
+    return;
   };
 
   return (
