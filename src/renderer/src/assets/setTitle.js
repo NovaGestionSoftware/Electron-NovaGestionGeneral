@@ -2,6 +2,6 @@ import { getAppVersion, getEnvironment, getFormattedDate } from "../frontend-res
 
 window.addEventListener("DOMContentLoaded", () => {
   // Construir título
-  const titulo = `NovaGestión v${getAppVersion()} ${getEnvironment()} \u2003 <${getFormattedDate()}> \u2003 <URL_DB> `;
+  const titulo = `Novagestión V.${getAppVersion()} ${getEnvironment()} \u2003 <${getFormattedDate()}> \u2003 <URL_DB> `;
   document.title = titulo;
 });

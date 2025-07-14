@@ -45,8 +45,11 @@ export default function ConfiguracionAccesosModal({ showModalState, modalType, s
           <div className="space-y-1">
             {/* CONTENIDO */}
             <HerramientasConfigAcceso onClose={handleCloseModal} />
-            <SearchCard nivelUsuarioSeleccionado={nivelUsuarioSeleccionado}  />
-            <AccesosTable setNivelUsuarioSeleccionado={setNivelUsuarioSeleccionado} nivelUsuarioSeleccionado={nivelUsuarioSeleccionado} />
+            <SearchCard nivelUsuarioSeleccionado={nivelUsuarioSeleccionado} />
+            <AccesosTable
+              setNivelUsuarioSeleccionado={setNivelUsuarioSeleccionado}
+              nivelUsuarioSeleccionado={nivelUsuarioSeleccionado}
+            />
           </div>
         </DraggableModal>
       ) : null}

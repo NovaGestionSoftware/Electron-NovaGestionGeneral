@@ -196,7 +196,7 @@ ipcMain.handle("launch-sistema-app", async (_event, dataLoginJson) => {
 
   const sistemaAppPath = isDev
     ? path.join(__dirname, "..", "..", "..", "NovaClientes-Electron")
-    : path.join(path.dirname(process.execPath), "..", "Novasistema", "novagestion.exe");
+    : path.join(path.dirname(process.execPath), "..", "NovaVentas", "novagestion.exe");
 
   console.log(sistemaAppPath);
 
