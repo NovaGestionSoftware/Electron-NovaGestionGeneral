@@ -1,25 +1,35 @@
 import { shoppingCart } from "@renderer/frontend-resources/assets/icons";
 import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
 import LoadingComponent from "@renderer/frontend-resources/electron/components/Loading/LoadingComponent";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 
 export default function SelectPuntoVenta({ dataLogin }) {
   const [loading, setLoading] = useState(false);
   const [readyTimeout, setReadyTimeout] = useState<NodeJS.Timeout | null>(null);
+  const readyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleReady = () => {
       console.log("✅ App secundaria lista");
       setLoading(false);
-      if (readyTimeout) clearTimeout(readyTimeout);
+
+      // Cancelamos el timeout si ya se lanzó la app correctamente
+      if (readyTimeoutRef.current) {
+        clearTimeout(readyTimeoutRef.current);
+        readyTimeoutRef.current = null;
+      }
     };
 
+    // Escuchar el evento del sistema
     window.electron?.ipcRenderer?.on("sistema-ready", handleReady);
 
     return () => {
+      // Limpiar listeners y timeout cuando se desmonte el componente
       window.electron?.ipcRenderer?.removeAllListeners("sistema-ready");
-      if (readyTimeout) clearTimeout(readyTimeout);
+      if (readyTimeoutRef.current) {
+        clearTimeout(readyTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -29,7 +39,11 @@ export default function SelectPuntoVenta({ dataLogin }) {
       .then(() => {
         setLoading(true);
 
-        // Si no llega 'READY' en 10 segundos, desactivamos el loading
+        // Si no llega el evento READY en 20 segundos, mostrar alerta
+        if (readyTimeoutRef.current) {
+          clearTimeout(readyTimeoutRef.current); // Evitar duplicados
+        }
+
         const timeout = setTimeout(() => {
           console.warn("⚠️ No se recibió 'READY' en tiempo esperado");
           setLoading(false);
@@ -40,7 +54,7 @@ export default function SelectPuntoVenta({ dataLogin }) {
           });
         }, 20000);
 
-        setReadyTimeout(timeout);
+        readyTimeoutRef.current = timeout;
       })
       .catch((err) => {
         console.error("Error al lanzar app:", err);
