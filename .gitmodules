@@ -1,6 +1,6 @@
-[submodule "src/frontend-resourses"]
-	path = src/frontend-resourses
-	url = https://github.com/NovaGestionSoftware/frontend-resourses.git
+# [submodule "src/frontend-resourses"]
+# 	path = src/frontend-resourses
+# 	url = https://github.com/NovaGestionSoftware/frontend-resourses.git
 [submodule "src/renderer/src/frontend-resources"]
 	path = src/renderer/src/frontend-resources
 	url = https://github.com/NovaGestionSoftware/frontend-resourses.git

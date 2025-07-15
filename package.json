@@ -23,7 +23,7 @@
   },
   "build": {
     "appId": "com.tuempresa.tuapp",
-    "productName": "SistemaVentas",
+    "productName": "NovaGeneral",
     "win": {
       "target": [
         "nsis",
