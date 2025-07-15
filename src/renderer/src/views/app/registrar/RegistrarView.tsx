@@ -14,7 +14,14 @@ export default function RegistrarView() {
         title: "Sistema de Ventas",
         message: "Ingresa un número válido.",
       });
-    window.electron.ipcRenderer.send("registrar-empresa", empresaID);
+
+    // Asegurar que sean solo números
+    const numeroLimpio = empresaID.replace(/\D/g, "");
+
+    // Rellenar con ceros hasta 6 dígitos
+    const empresaFormateada = numeroLimpio.padStart(6, "0");
+
+    window.electron.ipcRenderer.send("registrar-empresa", empresaFormateada);
     return;
   };
 

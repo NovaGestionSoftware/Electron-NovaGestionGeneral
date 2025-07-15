@@ -46,12 +46,12 @@ function createWindow(): void {
     // diálogos informativos
     if (!empresaID) {
       console.log("No se encontro empresa registrada");
-      await dialog.showMessageBox(mainWindow, {
-        type: "error",
-        title: "Registro faltante",
-        message: "No se encontró el valor HKLM\\SOFTWARE\\NovaGestion.",
-        buttons: ["Cerrar"],
-      });
+      // await dialog.showMessageBox(mainWindow, {
+      //   type: "error",
+      //   title: "Registro faltante",
+      //   message: "No se encontró el valor HKLM\\SOFTWARE\\NovaGestion.",
+      //   buttons: ["Cerrar"],
+      // });
     } else {
       console.log("Empresa: ", empresaID);
       // await dialog.showMessageBox(mainWindow, {

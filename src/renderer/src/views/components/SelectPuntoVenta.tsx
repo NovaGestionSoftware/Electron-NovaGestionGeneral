@@ -33,6 +33,11 @@ export default function SelectPuntoVenta({ dataLogin }) {
         const timeout = setTimeout(() => {
           console.warn("⚠️ No se recibió 'READY' en tiempo esperado");
           setLoading(false);
+          window?.electron?.ipcRenderer?.invoke("show-native-alert", {
+            type: "error",
+            title: "Sistema de Ventas",
+            message: "No se pudo encontrar el ejecutable del sistema.",
+          });
         }, 20000);
 
         setReadyTimeout(timeout);
