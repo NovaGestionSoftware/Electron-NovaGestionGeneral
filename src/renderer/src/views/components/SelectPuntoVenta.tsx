@@ -87,7 +87,7 @@ export default function SelectPuntoVenta({ dataLogin }) {
         <ActionButton
           onClick={handleLaunchApp}
           icon={<img src={shoppingCart as string} alt={"icon"} className={`h-10 w-10 drop-shadow-lg`} />}
-          text={"00005"}
+          text={"0005"}
           addClassName="flex flex-col h-20 w-24"
         />
       </div>

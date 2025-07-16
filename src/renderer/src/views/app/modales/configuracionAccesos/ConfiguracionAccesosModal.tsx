@@ -39,7 +39,7 @@ export default function ConfiguracionAccesosModal({ showModalState, modalType, s
           title="Configuración de Accesos"
           isVisible={showModalState && modalType === "configuracionAccesosModal"}
           onClose={handleCloseModal}
-          width="1050px"
+          width="1110px"
           index={40}
         >
           <div className="space-y-1">
