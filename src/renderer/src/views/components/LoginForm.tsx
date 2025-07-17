@@ -5,15 +5,23 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { CiUser } from "react-icons/ci";
+import { ActionButton } from "@renderer/frontend-resources/components";
 
-export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
+export default function LoginForm({
+  setLogin,
+  setDataLogin,
+  empresaID,
+  handleClose,
+  handleCloseModal,
+  usuariosEmpresa,
+}) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const initialValues = {
     empresa: String(Number(empresaID)),
-    usuario: "nova",
+    usuario: usuariosEmpresa[0].value,
     password: "",
   };
 
@@ -56,11 +64,16 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
     },
     onSuccess: (data) => {
       if (data) {
-        console.log(data);
+        // console.log(data);
         setDataLogin(data);
         setLogin(true);
-
+        window?.electron?.ipcRenderer?.invoke("show-native-alert", {
+          type: "info",
+          title: "Sistema de Ventas",
+          message: "Inicio de sesión exitoso.",
+        });
         console.log("login success");
+        handleCloseModal();
       }
 
       // localStorage.setItem("_u", String(data.USUARIO));
@@ -122,9 +135,13 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
       firstInput.focus();
     }
   };
+  function handleCerrarSesion() {
+    handleClose();
+    handleCloseModal();
+  }
 
   return (
-    <main className="flex items-center justify-center mt-6">
+    <main className="flex flex-col">
       <form
         className="relative flex h-auto w-full justify-center space-y-6 border-0 bg-transparent px-2"
         onSubmit={handleSubmit(handleForm)}
@@ -148,7 +165,7 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
                 {error}
               </div>
             )}
-            <div className="flex items-center mt-2 gap-2">
+            {/* <div className="flex items-center mt-2 gap-2">
               <label htmlFor="empresa" className="w-18 text-right block text-sm font-semibold">
                 Empresa
               </label>
@@ -162,7 +179,7 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
                 onFocus={handleFocus}
                 disabled
               />
-            </div>
+            </div> */}
 
             <div className="flex items-center mt-2 gap-2">
               <label htmlFor="usuario" className="w-18 text-right block text-sm font-semibold">
@@ -175,8 +192,10 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
                 onKeyDown={(event) => goToNextInput(event, "password")}
                 //defaultValue="nova"
               >
-                {userOptions.map((user) => (
-                  <option value={user.value}>{user?.userName}</option>
+                {usuariosEmpresa.map((user, index) => (
+                  <option key={index} value={user.usuario}>
+                    {user?.nombre}
+                  </option>
                 ))}
               </select>
             </div>
@@ -211,7 +230,9 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
             </button>
           </div>
         </div>
-        <div className="absolute left-2 -bottom-12 flex justify-center items-center gap-2">
+      </form>
+      <div className="relative">
+        <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-2">
             <label htmlFor="cargo" className="block text-sm font-semibold">
               Cargo
@@ -236,7 +257,10 @@ export default function LoginForm({ setLogin, setDataLogin, empresaID }) {
             />
           </div>
         </div>
-      </form>
+        <div className="absolute right-12 bottom-0">
+          <ActionButton onClick={handleCerrarSesion} text="Cerrar Sesión" />
+        </div>
+      </div>
     </main>
   );
 }

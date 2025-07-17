@@ -207,7 +207,7 @@ ipcMain.handle("launch-sistema-app", async (_event, dataLoginJson) => {
   const args = isDev ? ["run", "dev"] : ["/c", "start", '"NovaGestion"', "/B", `"${sistemaAppPath}"`];
 
   const env = { ...process.env, DATA_LOGIN: dataLoginJson };
-
+  console.log(env);
   const child = spawn(command, args, {
     cwd: isDev ? sistemaAppPath : undefined,
     shell: true,

@@ -40,8 +40,9 @@
     "dev": "electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
+    "obfuscate": "javascript-obfuscator src --output app --compact true --control-flow-flattening true --string-array true --string-array-encoding base64",
     "build:unpack": "npm run build && electron-builder --dir",
-    "build:win": "npm run build && electron-builder --win --dir && node rename-folder.js",
+    "build:win": "npm run obfuscate && electron-builder --win --dir && node rename-folder.js",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux"
   },
@@ -92,6 +93,7 @@
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
+    "javascript-obfuscator": "^4.1.1",
     "prettier": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

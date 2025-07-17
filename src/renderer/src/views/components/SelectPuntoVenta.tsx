@@ -4,10 +4,15 @@ import LoadingComponent from "@renderer/frontend-resources/electron/components/L
 import { useEffect, useRef, useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 
-export default function SelectPuntoVenta({ dataLogin }) {
+export default function SelectPuntoVenta({ dataLogin, empresaID }) {
   const [loading, setLoading] = useState(false);
   const [readyTimeout, setReadyTimeout] = useState<NodeJS.Timeout | null>(null);
   const readyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const dataLoginConEmpresa = {
+    ...dataLogin,
+    empresaId: empresaID, //numero de empresa registro del editor
+  };
 
   useEffect(() => {
     const handleReady = () => {
@@ -35,7 +40,7 @@ export default function SelectPuntoVenta({ dataLogin }) {
 
   const handleLaunchApp = () => {
     window.electron?.ipcRenderer
-      ?.invoke("launch-sistema-app", JSON.stringify(dataLogin))
+      ?.invoke("launch-sistema-app", JSON.stringify(dataLoginConEmpresa))
       .then(() => {
         setLoading(true);
 
@@ -66,23 +71,6 @@ export default function SelectPuntoVenta({ dataLogin }) {
     <>
       {loading && <LoadingComponent text="Iniciando Sistema..." />}
 
-      <div className="flex gap-2 p-4 bg-gray-100">
-        <FlexibleInputField
-          label="Empresa"
-          value={dataLogin?.empresa || ""}
-          labelWidth="60px"
-          inputWidth="w-24"
-          containerWidth="w-80"
-        />
-        <ActionButton
-          icon={<IoSearchSharp className={`h-6 w-6 ml-0.5 drop-shadow-lg`} />}
-          size="xs"
-          color="blue"
-          onClick={() => {}}
-          addClassName="h-8 w-8"
-        />
-        <FlexibleInputField value={(dataLogin?.nfantasia || "").trim().toUpperCase()} />
-      </div>
       <div className="p-1">
         <ActionButton
           onClick={handleLaunchApp}

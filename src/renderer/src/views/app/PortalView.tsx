@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import logoNova from "@renderer/assets/novaicon2-256.png";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
-import { avatar, key, usuarios } from "@renderer/frontend-resources/assets/icons";
+import { avatar, building, key, usuarios } from "@renderer/frontend-resources/assets/icons";
 import PruebaModal from "./modales/ConfigPcModal";
 import LoginForm from "../components/LoginForm";
 import SelectPuntoVenta from "../components/SelectPuntoVenta";
@@ -17,6 +17,9 @@ import EmpresasModal from "./modales/EmpresasModal";
 import RespaldarModal from "./modales/RespaldarModal";
 import RegistrarModal from "./modales/RegistrarModal";
 import ConfigPcModal from "./modales/ConfigPcModal";
+import LoginModal from "./modales/LoginModal";
+import EmpresaModal from "./modales/EmpresaModal";
+import { obtieneUsuariosEmpresa } from "@renderer/services/axiosLogin";
 
 interface DataLogin {
   empresa?: string;
@@ -66,12 +69,10 @@ export default function PortalView() {
   const [modalType, setModalType] = useState("");
   const [modalState, setModalState] = useState(false);
   const [login, setLogin] = useState(false);
-  const [dataLogin, setDataLogin] = useState<DataLogin>({
-    empresa: "",
-    nfantasia: "",
-  });
+  const [dataLogin, setDataLogin] = useState<DataLogin>({});
   const [contentVisible, setContentVisible] = useState(false); // nuevo estado
   const [empresaID, setEmpresaID] = useState("");
+  const [usuariosEmpresa, setUsuariosEmpresa] = useState({});
 
   const iniciarSesionButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -80,6 +81,27 @@ export default function PortalView() {
   };
 
   const modals = {
+    loginModal: (
+      <LoginModal
+        modalType={modalType}
+        showModalState={modalState}
+        setShowModalState={setModalState}
+        setLogin={setLogin}
+        setDataLogin={setDataLogin}
+        empresaID={empresaID}
+        handleClose={handleCerrarSesion}
+        usuariosEmpresa={usuariosEmpresa}
+      />
+    ),
+    empresaModal: (
+      <EmpresaModal
+        modalType={modalType}
+        showModalState={modalState}
+        setShowModalState={setModalState}
+        dataLogin={dataLogin}
+        empresaID={empresaID}
+      />
+    ),
     // usuarios
     usuariosModal: (
       <UsuariosModal modalType={modalType} showModalState={modalState} setShowModalState={setModalState} />
@@ -173,27 +195,46 @@ export default function PortalView() {
     setModalState(true);
   }
 
-  const handleClose = () => {
+  function handleClose() {
     if (!login) {
       setShowLogin(false);
     }
     if (login) {
-      window?.electron?.ipcRenderer
-        ?.invoke("show-native-alert", {
-          type: "warning",
-          title: "¿Estas seguro?",
-          message: "¿Estas seguro? La sesión se cerrara.",
-          buttons: ["Sí, salir", "Cancelar"],
-          defaultId: 0,
-          cancelId: 1,
-        })
-        .then((result) => {
-          if (result?.response === 0) {
-            setLogin(false);
-          }
-        });
+      handleCerrarSesion();
     }
-  };
+  }
+
+  function handleCerrarSesion() {
+    window?.electron?.ipcRenderer
+      ?.invoke("show-native-alert", {
+        type: "warning",
+        title: "¿Estas seguro?",
+        message: "¿Estas seguro? La sesión se cerrara.",
+        buttons: ["Sí, salir", "Cancelar"],
+        defaultId: 0,
+        cancelId: 1,
+      })
+      .then((result) => {
+        if (result?.response === 0) {
+          setLogin(false);
+          window?.electron?.ipcRenderer?.invoke("show-native-alert", {
+            type: "info",
+            title: "Sistema de Ventas",
+            message: "sesión cerrada exitosamente.",
+          });
+        }
+      });
+  }
+
+  async function handleIniciarSesion() {
+    try {
+      const respuesta = await obtieneUsuariosEmpresa(String(empresaID));
+      setUsuariosEmpresa(respuesta.data);
+      setShowLogin(true);
+    } catch (error) {
+      console.error("Error obteniendo usuarios:", error);
+    }
+  }
 
   return (
     <>
@@ -247,7 +288,7 @@ export default function PortalView() {
               <div className="border rounded-sm pl-[1px] pt-[0.5px] pb-[1px] pr-[2px]">
                 <button
                   className="w-40 px-3 py-1.5  cursor-pointer rounded-xs bg-indigo-600  font-normal text-white text-sm shadow-md transition-all duration-300 hover:bg-indigo-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  onClick={() => setShowLogin(true)}
+                  onClick={handleIniciarSesion}
                   ref={iniciarSesionButtonRef}
                 >
                   <span className="underline">I</span>niciar sesión
@@ -316,21 +357,30 @@ export default function PortalView() {
                 </div>
                 <div className="w-full bg-white">
                   {/* menu derecho superior */}
-                  {/* <div className="flex items-center gap-2 h-12 w-full bg-gray-100 px-2">
+                  <div className="flex items-center gap-2 h-12 w-full bg-gray-100 px-2">
                     <ActionButton
-                      onClick={() => handleOpenModal()}
+                      onClick={() => handleOpenModal("loginModal")}
                       icon={<img src={avatar as string} alt={"icon"} className={`h-6 w-6 drop-shadow-lg`} />}
                     />
                     <ActionButton
-                      onClick={() => handleOpenModal()}
-                      icon={<img src={avatar as string} alt={"icon"} className={`h-6 w-6 drop-shadow-lg`} />}
+                      onClick={() => handleOpenModal("empresaModal")}
+                      icon={
+                        <img
+                          src={building as string}
+                          alt={"icon"}
+                          className={`h-6 w-6 mr-1 ${!login ? "grayscale-100 opacity-60" : " drop-shadow-lg"}`}
+                        />
+                      }
+                      color={`${!login ? "grayDeshab" : "gray"}`}
+                      disabled={!login}
                     />
-                  </div> */}
-                  {showLogin && !login ? (
-                    <LoginForm setLogin={setLogin} setDataLogin={setDataLogin} empresaID={empresaID} />
-                  ) : login ? (
-                    <SelectPuntoVenta dataLogin={dataLogin} />
-                  ) : null}
+                  </div>
+                  {
+                    // showLogin && !login ? (
+                    //   <LoginForm setLogin={setLogin} setDataLogin={setDataLogin} empresaID={empresaID} />
+                    // ) :
+                    login ? <SelectPuntoVenta dataLogin={dataLogin} empresaID={empresaID} /> : null
+                  }
                 </div>
               </div>
             )}
