@@ -149,27 +149,28 @@ export default function PortalView() {
     iniciarSesionButtonRef?.current?.focus();
   }, []);
 
-  useEffect(() => {
-    // Función para manejar el atajo de teclado
-    const handleKeyDown = (event) => {
-      // Si se presiona la tecla 'I'
-      if (event.key === "i" || event.key === "I") {
-        setShowLogin(true);
-      }
-      // Si se presiona la tecla 'Escape', cerrar el login
-      if (event.key === "Escape") {
-        setShowLogin(false);
-      }
-    };
+  // precionar escape volver atras
+  // useEffect(() => {
+  //   // Función para manejar el atajo de teclado
+  //   const handleKeyDown = (event) => {
+  //     // Si se presiona la tecla 'I'
+  //     if (event.key === "i" || event.key === "I") {
+  //       setShowLogin(true);
+  //     }
+  //     // Si se presiona la tecla 'Escape', cerrar el login
+  //     if (event.key === "Escape") {
+  //       setShowLogin(false);
+  //     }
+  //   };
 
-    // Agregar el event listener cuando el componente se monte
-    document.addEventListener("keydown", handleKeyDown);
+  //   // Agregar el event listener cuando el componente se monte
+  //   document.addEventListener("keydown", handleKeyDown);
 
-    // Limpiar el event listener cuando el componente se desmonte
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  //   // Limpiar el event listener cuando el componente se desmonte
+  //   return () => {
+  //     document.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, []);
 
   // tiempo demora para mostrar form y efecto
   useEffect(() => {

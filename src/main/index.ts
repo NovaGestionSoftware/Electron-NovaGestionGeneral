@@ -7,6 +7,8 @@ import { getFullMenu } from "./menu/fullMenu.js";
 import { spawn } from "child_process";
 import path from "path";
 import * as net from "net";
+const https = require("https");
+const os = require("os");
 
 const Winreg = require("winreg");
 
@@ -238,7 +240,64 @@ ipcMain.handle("show-native-alert", async (_event, options) => {
   return result; // Contiene { response: indexDelBotonPresionado }
 });
 
+// IPC handler para obtener info de la computadora
+ipcMain.handle("get-system-info", async () => {
+  const release = os.release(); // ej: 10.0.22621
+  const build = parseInt(release.split(".")[2]);
+  const windowsVersion = build >= 22000 ? "(W11)" : "(W10)";
+
+  const publicIP = await getPublicIP();
+
+  return {
+    username: os.userInfo().username.toUpperCase(),
+    version: release,
+    windowsVersion,
+    hostname: os.hostname(),
+    localIP: getLocalIP(),
+    publicIP,
+    runtimes: {
+      node: process.versions.node,
+      chrome: process.versions.chrome,
+      electron: process.versions.electron,
+      v8: process.versions.v8,
+    },
+  };
+});
+
 // Cierra completamente la aplicación
 ipcMain.on("close-app", () => {
   app.quit();
 });
+
+// Función para obtener IP local
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const net of interfaces[name] || []) {
+      if (net.family === "IPv4" && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+  return "Desconocida";
+}
+
+// Función para obtener IP pública
+function getPublicIP() {
+  return new Promise((resolve) => {
+    https
+      .get("https://api.ipify.org?format=json", (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          try {
+            const json = JSON.parse(data);
+            resolve(json.ip);
+          } catch {
+            resolve("Desconocida");
+          }
+        });
+      })
+      .on("error", () => resolve("Desconocida"));
+  });
+}
