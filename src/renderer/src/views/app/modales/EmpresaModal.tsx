@@ -1,9 +1,10 @@
+import { done, close } from "@renderer/frontend-resources/assets/icons";
 import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { useEffect } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 
-export default function EmpresaModal({ showModalState, modalType, setShowModalState, dataLogin, empresaID }) {
+export default function EmpresaModal({ showModalState, modalType, setShowModalState, dataLogin, empresaID, setLogin }) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -34,29 +35,55 @@ export default function EmpresaModal({ showModalState, modalType, setShowModalSt
     <>
       {showModalState && modalType === "empresaModal" ? (
         <DraggableModal
-          title="empresa modal"
+          title="Empresa"
           isVisible={showModalState && modalType === "empresaModal"}
           onClose={handleCloseModal}
           width="600px"
           index={40}
         >
           {/* CONTENIDO */}
-          <div className="flex gap-2 p-4 bg-gray-100">
-            <FlexibleInputField
-              label="Empresa"
-              value={empresaID}
-              labelWidth="60px"
-              inputWidth="w-24"
-              containerWidth="w-70"
-            />
-            <ActionButton
-              icon={<IoSearchSharp className={`h-6 w-6 ml-0.5 drop-shadow-lg`} />}
-              size="xs"
-              color="blue"
-              onClick={() => {}}
-              addClassName="h-8 w-8"
-            />
-            <FlexibleInputField value={(dataLogin?.nfantasia || "").trim().toUpperCase()} />
+          <div className="flex flex-col gap-2 p-4 bg-gray-100">
+            <div className="flex gap-2">
+              <FlexibleInputField
+                label="Empresa"
+                value={dataLogin?.empresa}
+                labelWidth="60px"
+                inputWidth="w-24"
+                containerWidth="w-70"
+              />
+              <ActionButton
+                icon={<IoSearchSharp className={`h-6 w-6 ml-0.5 drop-shadow-lg`} />}
+                size="xs"
+                color="blue"
+                onClick={() => {}}
+                addClassName="h-8 w-8"
+              />
+              <FlexibleInputField value={(dataLogin?.nfantasia || "").trim().toUpperCase()} />
+            </div>
+            <div className="flex justify-between gap-2 mt-4">
+              <ActionButton
+                text="Cerrar Empresa"
+                onClick={() => {
+                  setLogin(false);
+                  handleCloseModal();
+                }}
+              />
+              <div className="space-x-2">
+                <ActionButton
+                  icon={<img src={done} alt="ok" className={"w-6 h-6  drop-shadow-lg"} />}
+                  onClick={() => {
+                    setLogin(true);
+                    handleCloseModal();
+                  }}
+                  color={"gray"}
+                />
+                <ActionButton
+                  icon={<img src={close} alt="ok" className={"w-6 h-6  drop-shadow-lg"} />}
+                  onClick={handleCloseModal}
+                  color={"gray"}
+                />
+              </div>
+            </div>
           </div>
         </DraggableModal>
       ) : null}

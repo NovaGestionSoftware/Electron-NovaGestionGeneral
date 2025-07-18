@@ -24,6 +24,7 @@ import { obtieneUsuariosEmpresa } from "@renderer/services/axiosLogin";
 interface DataLogin {
   empresa?: string;
   nfantasia?: string;
+  usuario?: string;
 }
 
 export default function PortalView() {
@@ -91,6 +92,7 @@ export default function PortalView() {
         empresaID={empresaID}
         handleClose={handleCerrarSesion}
         usuariosEmpresa={usuariosEmpresa}
+        handleOpenModal={handleOpenModal}
       />
     ),
     empresaModal: (
@@ -100,6 +102,7 @@ export default function PortalView() {
         setShowModalState={setModalState}
         dataLogin={dataLogin}
         empresaID={empresaID}
+        setLogin={setLogin}
       />
     ),
     // usuarios
@@ -357,23 +360,29 @@ export default function PortalView() {
                 </div>
                 <div className="w-full bg-white">
                   {/* menu derecho superior */}
-                  <div className="flex items-center gap-2 h-12 w-full bg-gray-100 px-2">
-                    <ActionButton
-                      onClick={() => handleOpenModal("loginModal")}
-                      icon={<img src={avatar as string} alt={"icon"} className={`h-6 w-6 drop-shadow-lg`} />}
-                    />
-                    <ActionButton
-                      onClick={() => handleOpenModal("empresaModal")}
-                      icon={
-                        <img
-                          src={building as string}
-                          alt={"icon"}
-                          className={`h-6 w-6 mr-1 ${!login ? "grayscale-100 opacity-60" : " drop-shadow-lg"}`}
-                        />
-                      }
-                      color={`${!login ? "grayDeshab" : "gray"}`}
-                      disabled={!login}
-                    />
+                  <div className="flex flex-col items-start gap-2 w-full bg-gray-100 py-1 px-2">
+                    <div className="flex items-center space-x-2">
+                      <ActionButton
+                        onClick={() => handleOpenModal("loginModal")}
+                        icon={<img src={avatar as string} alt={"icon"} className={`h-6 w-6 drop-shadow-lg`} />}
+                      />
+                      <p className="font-bold text-red-800">{login && dataLogin?.usuario}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <ActionButton
+                        onClick={() => handleOpenModal("empresaModal")}
+                        icon={
+                          <img
+                            src={building as string}
+                            alt={"icon"}
+                            className={`h-6 w-6 mr-1 ${!login ? "grayscale-100 opacity-60" : " drop-shadow-lg"}`}
+                          />
+                        }
+                        color={`${!login ? "grayDeshab" : "gray"}`}
+                        disabled={!login}
+                      />
+                      <p className="font-bold text-red-800">{login && dataLogin?.nfantasia?.toUpperCase()}</p>
+                    </div>
                   </div>
                   {
                     // showLogin && !login ? (

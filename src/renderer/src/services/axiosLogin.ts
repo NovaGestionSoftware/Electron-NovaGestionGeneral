@@ -22,9 +22,10 @@ export async function obtieneUsuariosEmpresa(empresaID) {
 
 export async function loginEmpresa(formData) {
   try {
-    const { data } = await api.post("/login_empresa", formData);
-
-    return data;
+    const response = await api.get(
+      `/loginEmpresaSis.php?_i={"_e":"${formData.empresa}","_m":"homo","_s":"10","_u":"${formData.usuario}","_p":"${formData.password}"}`,
+    );
+    return { ...response.data.data };
   } catch (error) {
     console.log("❌ Error en loginEmpresa:", error);
     throw error; // 🔥 Esto activa onError en useMutation

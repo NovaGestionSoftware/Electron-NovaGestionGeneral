@@ -11,6 +11,7 @@ export default function LoginModal({
   empresaID,
   handleClose,
   usuariosEmpresa,
+  handleOpenModal
 }) {
   // const [showModal, setShowModal] = useState(false);
 
@@ -57,6 +58,7 @@ export default function LoginModal({
               handleClose={handleClose}
               handleCloseModal={handleCloseModal}
               usuariosEmpresa={usuariosEmpresa}
+              handleOpenModal={handleOpenModal}
             />
           </div>
         </DraggableModal>

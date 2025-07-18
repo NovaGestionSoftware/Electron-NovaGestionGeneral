@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { loginEmpresa } from "../app/auth/services/UserService";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { CiUser } from "react-icons/ci";
 import { ActionButton } from "@renderer/frontend-resources/components";
+import { loginEmpresa } from "@renderer/services/axiosLogin";
 
 export default function LoginForm({
   setLogin,
@@ -14,6 +14,7 @@ export default function LoginForm({
   handleClose,
   handleCloseModal,
   usuariosEmpresa,
+  handleOpenModal,
 }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -65,15 +66,11 @@ export default function LoginForm({
     onSuccess: (data) => {
       if (data) {
         // console.log(data);
-        setDataLogin(data);
-        setLogin(true);
-        window?.electron?.ipcRenderer?.invoke("show-native-alert", {
-          type: "info",
-          title: "Sistema de Ventas",
-          message: "Inicio de sesión exitoso.",
-        });
+        console.log(data);
+        setDataLogin(data[0]);
         console.log("login success");
         handleCloseModal();
+        handleOpenModal("empresaModal");
       }
 
       // localStorage.setItem("_u", String(data.USUARIO));
