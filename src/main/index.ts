@@ -11,9 +11,27 @@ const https = require("https");
 const os = require("os");
 
 const Winreg = require("winreg");
+let splashWindow: BrowserWindow | null;
 
 function createWindow(): void {
   // 1. Ventana de splash
+  splashWindow = new BrowserWindow({
+    width: 400,
+    height: 250,
+    frame: false,
+    alwaysOnTop: true,
+    transparent: false,
+    resizable: false,
+    autoHideMenuBar: true,
+    show: false,
+    backgroundColor: "#ffffff",
+    icon: join(__dirname, "./../../resources/novaico.ico"),
+    ...(process.platform === "linux" ? { icon } : {}),
+  });
+
+  splashWindow.loadFile(join(__dirname, "./../../resources/splash.html")).then(() => {
+    splashWindow?.show();
+  });
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -40,6 +58,11 @@ function createWindow(): void {
     const fullMenu = getFullMenu(mainWindow);
     Menu.setApplicationMenu(fullMenu);
     mainWindow.setMenu(fullMenu);
+
+    if (splashWindow && !splashWindow.isDestroyed()) {
+      splashWindow.close();
+      splashWindow = null;
+    }
   });
 
   mainWindow.webContents.once("did-finish-load", async () => {
