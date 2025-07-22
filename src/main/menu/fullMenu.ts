@@ -187,5 +187,21 @@ export function getFullMenu(mainWindow: BrowserWindow) {
     //     },
     //   ],
     // },
+    ...(isDev
+      ? [
+          {
+            label: "Playground",
+            submenu: [
+              {
+                label: "Playground",
+                click: async () => {
+                  // await mainWindow?.loadURL("http://localhost:5173/#/ajuste-stock");
+                  mainWindow?.webContents.send("show-playground");
+                },
+              },
+            ],
+          },
+        ]
+      : []),
   ]);
 }

@@ -5,6 +5,7 @@ import { ModalProvider } from "@renderer/frontend-resources/electron/components/
 import logoNova from "@renderer/frontend-resources/assets/logos/novaIcon.png";
 import AcercaDeView from "../app/Archivo/AcercaDeView";
 import Modal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/Modal";
+import PlaygroundView from "../app/Playground/PlaygroundView";
 
 export default function Portal() {
   const [mode, setMode] = useState<"loading" | "registrar" | "login">("loading");
@@ -24,6 +25,12 @@ export default function Portal() {
       key: "show-acerca-de",
       title: "Novagestión",
       component: (modalId: string, onClose: () => void) => <AcercaDeView modalId={modalId} onClose={onClose} />,
+    },
+
+    PlaygroundView: {
+      key: "show-playground",
+      title: "Novagestión",
+      component: () => <PlaygroundView />,
     },
   };
 
