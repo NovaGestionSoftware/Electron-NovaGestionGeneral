@@ -1,7 +1,13 @@
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { useEffect } from "react";
 
-export default function NodosModal({ showModalState, modalType, setShowModalState }) {
+interface NodosModalProps {
+  modalType: string;
+  showModalState: boolean;
+  setShowModalState: (value: boolean) => void;
+}
+
+export default function NodosModal({ showModalState, modalType, setShowModalState }: NodosModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

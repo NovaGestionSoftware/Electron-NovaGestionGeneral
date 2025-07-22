@@ -1,7 +1,13 @@
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { useEffect } from "react";
 
-export default function RegistrarModal({ showModalState, modalType, setShowModalState }) {
+interface RegistrarModalProps {
+  modalType: string;
+  showModalState: boolean;
+  setShowModalState: (value: boolean) => void;
+}
+
+export default function RegistrarModal({ showModalState, modalType, setShowModalState }: RegistrarModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import logoNova from "@renderer/assets/novaicon2-256.png";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
-import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
+import { ActionButton } from "@renderer/frontend-resources/components";
 import { avatar, building, key, usuarios } from "@renderer/frontend-resources/assets/icons";
-import PruebaModal from "./modales/ConfigPcModal";
-import LoginForm from "../components/LoginForm";
 import SelectPuntoVenta from "../components/SelectPuntoVenta";
 import ConfiguracionAccesosModal from "./modales/configuracionAccesos/ConfiguracionAccesosModal";
 import UsuariosModal from "./modales/UsuariosModal";
@@ -20,15 +18,21 @@ import ConfigPcModal from "./modales/ConfigPcModal";
 import LoginModal from "./modales/LoginModal";
 import EmpresaModal from "./modales/EmpresaModal";
 import { obtieneUsuariosEmpresa } from "@renderer/services/axiosLogin";
+import { DataLogin } from "@renderer/types/types";
 
-interface DataLogin {
-  empresa?: string;
-  nfantasia?: string;
-  usuario?: string;
+interface MenuItem {
+  name: string;
+  subItems: SubItem[];
+}
+
+interface SubItem {
+  text: string;
+  icon: React.ReactNode;
+  onClick: () => void;
 }
 
 export default function PortalView() {
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       name: "Usuario",
       subItems: [
@@ -65,15 +69,15 @@ export default function PortalView() {
     },
   ];
 
-  const [showLogin, setShowLogin] = useState(false);
+  const [showLogin, setShowLogin] = useState<boolean>(false);
   const [openMenu, setOpenMenu] = useState<string>(menuItems[0]?.name || "");
-  const [modalType, setModalType] = useState("");
-  const [modalState, setModalState] = useState(false);
-  const [login, setLogin] = useState(false);
-  const [dataLogin, setDataLogin] = useState<DataLogin>({});
-  const [contentVisible, setContentVisible] = useState(false); // nuevo estado
-  const [empresaID, setEmpresaID] = useState("");
-  const [usuariosEmpresa, setUsuariosEmpresa] = useState({});
+  const [modalType, setModalType] = useState<string>("");
+  const [modalState, setModalState] = useState<boolean>(false);
+  const [login, setLogin] = useState<boolean>(false);
+  const [usuariosEmpresa, setUsuariosEmpresa] = useState<DataLogin[]>([]);
+  const [dataLogin, setDataLogin] = useState<DataLogin>({ empresa: "", nfantasia: "", tusuario: 0, usuario: "" });
+  const [contentVisible, setContentVisible] = useState<boolean>(false); // nuevo estado
+  const [empresaID, setEmpresaID] = useState<string>("");
 
   const iniciarSesionButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -87,7 +91,6 @@ export default function PortalView() {
         modalType={modalType}
         showModalState={modalState}
         setShowModalState={setModalState}
-        setLogin={setLogin}
         setDataLogin={setDataLogin}
         empresaID={empresaID}
         handleClose={handleCerrarSesion}
@@ -101,7 +104,6 @@ export default function PortalView() {
         showModalState={modalState}
         setShowModalState={setModalState}
         dataLogin={dataLogin}
-        empresaID={empresaID}
         setLogin={setLogin}
       />
     ),
@@ -232,7 +234,7 @@ export default function PortalView() {
 
   async function handleIniciarSesion() {
     try {
-      const respuesta = await obtieneUsuariosEmpresa(String(empresaID));
+      const respuesta = await obtieneUsuariosEmpresa(empresaID);
       setUsuariosEmpresa(respuesta.data);
       setShowLogin(true);
     } catch (error) {

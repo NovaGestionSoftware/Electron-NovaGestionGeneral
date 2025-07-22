@@ -1,7 +1,13 @@
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { useEffect } from "react";
 
-export default function RespaldarModal({ showModalState, modalType, setShowModalState }) {
+interface RespaldarModalProps {
+  modalType: string;
+  showModalState: boolean;
+  setShowModalState: (value: boolean) => void;
+}
+
+export default function RespaldarModal({ showModalState, modalType, setShowModalState }: RespaldarModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

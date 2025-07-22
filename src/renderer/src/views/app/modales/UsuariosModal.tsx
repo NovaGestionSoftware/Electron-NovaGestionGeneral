@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import EntityInfoModal from "@renderer/frontend-resources/electron/components/Modales/EntityInfoModal";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 
-export default function UsuariosModal({ modalType, showModalState, setShowModalState }) {
+interface UsuariosModalProps {
+  modalType: string;
+  showModalState: boolean;
+  setShowModalState: (value: boolean) => void;
+}
+
+export default function UsuariosModal({ modalType, showModalState, setShowModalState }: UsuariosModalProps) {
   const [inputCodigo, setInputCodigo] = useState("");
   const [inputNombre, setInputNombre] = useState("");
 

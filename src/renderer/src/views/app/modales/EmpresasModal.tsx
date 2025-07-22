@@ -1,7 +1,13 @@
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { useEffect } from "react";
 
-export default function EmpresasModal({ showModalState, modalType, setShowModalState }) {
+interface EmpresasModalProps {
+  modalType: string;
+  showModalState: boolean;
+  setShowModalState: (value: boolean) => void;
+}
+
+export default function EmpresasModal({ showModalState, modalType, setShowModalState }: EmpresasModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

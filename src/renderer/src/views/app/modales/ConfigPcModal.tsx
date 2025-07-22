@@ -1,7 +1,13 @@
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { useEffect } from "react";
 
-export default function ConfigPcModal({ showModalState, modalType, setShowModalState }) {
+interface ConfigPcModalProps {
+  modalType: string;
+  showModalState: boolean;
+  setShowModalState: (value: boolean) => void;
+}
+
+export default function ConfigPcModal({ showModalState, modalType, setShowModalState }: ConfigPcModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

@@ -1,10 +1,25 @@
 import { done, close } from "@renderer/frontend-resources/assets/icons";
 import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
+import { DataLogin } from "@renderer/types/types";
 import { useEffect } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 
-export default function EmpresaModal({ showModalState, modalType, setShowModalState, dataLogin, empresaID, setLogin }) {
+interface EmpresaModalProps {
+  dataLogin: DataLogin;
+  showModalState: boolean;
+  modalType: string;
+  setShowModalState: (value: boolean) => void;
+  setLogin: (value: boolean) => void;
+}
+
+export default function EmpresaModal({
+  showModalState,
+  modalType,
+  setShowModalState,
+  dataLogin,
+  setLogin,
+}: EmpresaModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

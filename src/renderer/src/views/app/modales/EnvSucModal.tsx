@@ -1,7 +1,13 @@
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { useEffect } from "react";
 
-export default function EnvSucModal({ showModalState, modalType, setShowModalState }) {
+interface EnvSucModalProps {
+  modalType: string;
+  showModalState: boolean;
+  setShowModalState: (value: boolean) => void;
+}
+
+export default function EnvSucModal({ showModalState, modalType, setShowModalState }: EnvSucModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {

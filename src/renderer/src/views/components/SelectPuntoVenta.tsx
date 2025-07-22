@@ -1,12 +1,17 @@
 import { shoppingCart } from "@renderer/frontend-resources/assets/icons";
-import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
+import { ActionButton } from "@renderer/frontend-resources/components";
 import LoadingComponent from "@renderer/frontend-resources/electron/components/Loading/LoadingComponent";
+import { DataLogin } from "@renderer/types/types";
 import { useEffect, useRef, useState } from "react";
-import { IoSearchSharp } from "react-icons/io5";
 
-export default function SelectPuntoVenta({ dataLogin, empresaID }) {
+interface SelectPuntoVentaProps {
+  dataLogin: DataLogin;
+  empresaID: string; //numero de empresa registro del editor
+}
+
+export default function SelectPuntoVenta({ dataLogin, empresaID }: SelectPuntoVentaProps) {
   const [loading, setLoading] = useState(false);
-  const [readyTimeout, setReadyTimeout] = useState<NodeJS.Timeout | null>(null);
+  // const [readyTimeout, setReadyTimeout] = useState<NodeJS.Timeout | null>(null);
   const readyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dataLoginConEmpresa = {

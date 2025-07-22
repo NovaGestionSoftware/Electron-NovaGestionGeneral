@@ -1,14 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { CiUser } from "react-icons/ci";
 import { ActionButton } from "@renderer/frontend-resources/components";
 import { loginEmpresa } from "@renderer/services/axiosLogin";
+import { LoginFormData } from "@renderer/types/types";
 
 export default function LoginForm({
-  setLogin,
   setDataLogin,
   empresaID,
   handleClose,
@@ -16,12 +15,11 @@ export default function LoginForm({
   usuariosEmpresa,
   handleOpenModal,
 }) {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const initialValues = {
-    empresa: String(Number(empresaID)),
+  const initialValues: LoginFormData = {
+    empresa: empresaID,
     usuario: usuariosEmpresa[0].value,
     password: "",
   };
@@ -36,17 +34,6 @@ export default function LoginForm({
   });
 
   const isFormValid = isDirty && isValid && !loading;
-
-  const userOptions = [
-    {
-      value: "nova",
-      userName: "Admin",
-    },
-    {
-      value: "pamela",
-      userName: "Pamela Gonzalez",
-    },
-  ];
 
   const { mutate } = useMutation({
     mutationFn: loginEmpresa,
@@ -66,7 +53,7 @@ export default function LoginForm({
     onSuccess: (data) => {
       if (data) {
         // console.log(data);
-        console.log(data);
+        // console.log(data);
         setDataLogin(data[0]);
         console.log("login success");
         handleCloseModal();
@@ -90,7 +77,7 @@ export default function LoginForm({
     },
   });
 
-  const handleForm = (formData) => {
+  const handleForm = (formData: LoginFormData) => {
     mutate(formData);
   };
 
@@ -126,12 +113,12 @@ export default function LoginForm({
     }
   };
 
-  const handleFocus = () => {
-    const firstInput = document.getElementById("empresa");
-    if (firstInput) {
-      firstInput.focus();
-    }
-  };
+  // const handleFocus = () => {
+  //   const firstInput = document.getElementById("empresa");
+  //   if (firstInput) {
+  //     firstInput.focus();
+  //   }
+  // };
   function handleCerrarSesion() {
     handleClose();
     handleCloseModal();

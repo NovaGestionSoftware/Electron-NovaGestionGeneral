@@ -4,7 +4,17 @@ import HerramientasConfigAcceso from "./components/HerramientasConfigAcceso";
 import SearchCard from "./components/SearchCard";
 import AccesosTable from "./components/AccesosTable";
 
-export default function ConfiguracionAccesosModal({ showModalState, modalType, setShowModalState }) {
+interface ConfiguracionAccesosModalProps {
+  modalType: string;
+  showModalState: boolean;
+  setShowModalState: (value: boolean) => void;
+}
+
+export default function ConfiguracionAccesosModal({
+  showModalState,
+  modalType,
+  setShowModalState,
+}: ConfiguracionAccesosModalProps) {
   // const [showModal, setShowModal] = useState(false);
   const [nivelUsuarioSeleccionado, setNivelUsuarioSeleccionado] = useState({});
 
