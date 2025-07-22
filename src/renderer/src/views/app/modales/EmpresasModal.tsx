@@ -2,12 +2,13 @@ import DraggableModal from "@renderer/frontend-resources/electron/components/Mod
 import { useEffect } from "react";
 
 interface EmpresasModalProps {
-  modalType: string;
-  showModalState: boolean;
-  setShowModalState: (value: boolean) => void;
+  modalType?: string;
+  showModalState?: boolean;
+  setShowModalState?: (value: boolean) => void;
+  onClose?: () => void;
 }
 
-export default function EmpresasModal({ showModalState, modalType, setShowModalState }: EmpresasModalProps) {
+export default function EmpresasModal({ showModalState, modalType, setShowModalState, onClose }: EmpresasModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -27,7 +28,8 @@ export default function EmpresasModal({ showModalState, modalType, setShowModalS
   }, [handleCloseModal]);
 
   function handleCloseModal() {
-    setShowModalState(false);
+    onClose && onClose();
+    setShowModalState && setShowModalState(false);
   }
 
   // function handleOpenModal() {
@@ -42,7 +44,7 @@ export default function EmpresasModal({ showModalState, modalType, setShowModalS
           isVisible={showModalState && modalType === "empresasModal"}
           onClose={handleCloseModal}
           width="400px"
-          index={40}
+          index={50}
         >
           {/* CONTENIDO */}
           <div>Modal de prueba</div>
@@ -58,7 +60,7 @@ export default function EmpresasModal({ showModalState, modalType, setShowModalS
           </div> */}
         </DraggableModal>
       ) : null}
-      <div className="opacity-45 fixed inset-0 z-30 bg-black"></div>
+      <div className="opacity-45 fixed inset-0 z-40 bg-black"></div>
     </>
   );
 }

@@ -1,8 +1,8 @@
 import { ColumnDef } from "@renderer/frontend-resources/electron/utils/table";
 import { FlexibleInputField } from "@renderer/frontend-resources/components";
 import { useEffect, useRef, useState } from "react";
-import EntityInfoModal from "@renderer/frontend-resources/electron/components/Modales/EntityInfoModal";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
+import EntityInfoModal from "@renderer/frontend-resources/electron/components/Modales/EntityInfoModal/EntityInfoModal";
 
 interface UsuariosModalProps {
   modalType: string;

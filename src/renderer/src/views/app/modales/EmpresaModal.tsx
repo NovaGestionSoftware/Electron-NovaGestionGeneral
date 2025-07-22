@@ -2,8 +2,9 @@ import { done, close } from "@renderer/frontend-resources/assets/icons";
 import { ActionButton, FlexibleInputField } from "@renderer/frontend-resources/components";
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
 import { DataLogin } from "@renderer/types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
+import EmpresasModal from "./EmpresasModal";
 
 interface EmpresaModalProps {
   dataLogin: DataLogin;
@@ -20,7 +21,7 @@ export default function EmpresaModal({
   dataLogin,
   setLogin,
 }: EmpresaModalProps) {
-  // const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -42,9 +43,9 @@ export default function EmpresaModal({
     setShowModalState(false);
   }
 
-  // function handleOpenModal() {
-  //   setShowModal(true);
-  // }
+  function handleOpenModal() {
+    setShowModal(true);
+  }
 
   return (
     <>
@@ -70,7 +71,7 @@ export default function EmpresaModal({
                 icon={<IoSearchSharp className={`h-6 w-6 ml-0.5 drop-shadow-lg`} />}
                 size="xs"
                 color="blue"
-                onClick={() => {}}
+                onClick={handleOpenModal}
                 addClassName="h-8 w-8"
               />
               <FlexibleInputField value={(dataLogin?.nfantasia || "").trim().toUpperCase()} />
@@ -103,6 +104,7 @@ export default function EmpresaModal({
         </DraggableModal>
       ) : null}
       <div className="opacity-45 fixed inset-0 z-30 bg-black"></div>
+      {showModal && <EmpresasModal showModalState={true} modalType={"empresasModal"} onClose={() => setShowModal(false)} />}
     </>
   );
 }
