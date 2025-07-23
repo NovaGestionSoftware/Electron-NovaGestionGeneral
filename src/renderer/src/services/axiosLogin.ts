@@ -8,7 +8,7 @@ const api = axios.create({
 export async function obtieneUsuariosEmpresa(empresaID: string) {
   try {
     const response = await api.get(`/obtieneEmpresasUsu.php?_d={"_e":"${empresaID}"}`);
-    console.log(empresaID);
+    //console.log(empresaID);
 
     return { ...response.data };
   } catch (error) {

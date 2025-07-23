@@ -1,5 +1,5 @@
 import DraggableModal from "@renderer/frontend-resources/electron/components/Modales/modalContainers/DraggableModal";
-import { DataLogin } from "@renderer/types/types";
+import { DataLogin, DataUsuarios } from "@renderer/types/types";
 import LoginForm from "@renderer/views/components/LoginForm";
 import { useEffect } from "react";
 
@@ -7,11 +7,12 @@ interface LoginModalProps {
   showModalState: boolean;
   modalType: string;
   empresaID: string;
-  usuariosEmpresa: DataLogin[];
+  usuariosEmpresa: DataUsuarios[];
   setShowModalState: (value: boolean) => void;
   setDataLogin: (value: DataLogin) => void;
   handleClose: () => void;
-  handleOpenModal: () => void;
+  handleOpenModal: (modalName: string) => void;
+  handleIniciarSesion: () => void;
 }
 
 export default function LoginModal({
@@ -23,6 +24,7 @@ export default function LoginModal({
   handleClose,
   usuariosEmpresa,
   handleOpenModal,
+  handleIniciarSesion,
 }: LoginModalProps) {
   // const [showModal, setShowModal] = useState(false);
 
@@ -69,6 +71,7 @@ export default function LoginModal({
               handleCloseModal={handleCloseModal}
               usuariosEmpresa={usuariosEmpresa}
               handleOpenModal={handleOpenModal}
+              handleIniciarSesion={handleIniciarSesion}
             />
           </div>
         </DraggableModal>

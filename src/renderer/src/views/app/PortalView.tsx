@@ -18,7 +18,7 @@ import ConfigPcModal from "./modales/ConfigPcModal";
 import LoginModal from "./modales/LoginModal";
 import EmpresaModal from "./modales/EmpresaModal";
 import { obtieneUsuariosEmpresa } from "@renderer/services/axiosLogin";
-import { DataLogin } from "@renderer/types/types";
+import { DataLogin, DataUsuarios } from "@renderer/types/types";
 
 interface MenuItem {
   name: string;
@@ -74,7 +74,7 @@ export default function PortalView() {
   const [modalType, setModalType] = useState<string>("");
   const [modalState, setModalState] = useState<boolean>(false);
   const [login, setLogin] = useState<boolean>(false);
-  const [usuariosEmpresa, setUsuariosEmpresa] = useState<DataLogin[]>([]);
+  const [usuariosEmpresa, setUsuariosEmpresa] = useState<DataUsuarios[]>([]);
   const [dataLogin, setDataLogin] = useState<DataLogin>({ empresa: "", nfantasia: "", tusuario: 0, usuario: "" });
   const [contentVisible, setContentVisible] = useState<boolean>(false); // nuevo estado
   const [empresaID, setEmpresaID] = useState<string>("");
@@ -96,6 +96,7 @@ export default function PortalView() {
         handleClose={handleCerrarSesion}
         usuariosEmpresa={usuariosEmpresa}
         handleOpenModal={handleOpenModal}
+        handleIniciarSesion={handleIniciarSesion}
       />
     ),
     empresaModal: (

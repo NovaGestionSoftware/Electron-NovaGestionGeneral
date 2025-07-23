@@ -5,7 +5,18 @@ import { ClipLoader } from "react-spinners";
 import { CiUser } from "react-icons/ci";
 import { ActionButton } from "@renderer/frontend-resources/components";
 import { loginEmpresa } from "@renderer/services/axiosLogin";
-import { LoginFormData } from "@renderer/types/types";
+import { DataLogin, DataUsuarios, LoginFormData } from "@renderer/types/types";
+import { arrows } from "@renderer/frontend-resources/assets/icons";
+
+interface LoginFormProps {
+  setDataLogin: (value: DataLogin) => void;
+  empresaID: string;
+  handleClose: () => void;
+  handleCloseModal: () => void;
+  usuariosEmpresa: DataUsuarios[];
+  handleOpenModal: (modalName: string) => void;
+  handleIniciarSesion: () => void;
+}
 
 export default function LoginForm({
   setDataLogin,
@@ -14,13 +25,14 @@ export default function LoginForm({
   handleCloseModal,
   usuariosEmpresa,
   handleOpenModal,
-}) {
+  handleIniciarSesion,
+}: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const initialValues: LoginFormData = {
     empresa: empresaID,
-    usuario: usuariosEmpresa[0].value,
+    usuario: usuariosEmpresa[0].usuario,
     password: "",
   };
 
@@ -182,6 +194,16 @@ export default function LoginForm({
                   </option>
                 ))}
               </select>
+              <div className="absolute right-4">
+                <ActionButton
+                  icon={<img src={arrows} alt="back" className="h-6 w-6 drop-shadow-lg" />}
+                  onClick={handleIniciarSesion}
+                  size="sm"
+                  color="gray"
+                  addClassName="h-9 w-10"
+                  title="Volver atrás"
+                />
+              </div>
             </div>
             <div className="flex items-center mt-2 gap-2">
               <label htmlFor="password" className="block text-sm font-semibold ">
