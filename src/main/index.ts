@@ -9,6 +9,7 @@ import path from "path";
 import * as net from "net";
 const https = require("https");
 const os = require("os");
+const fs = require("fs");
 
 const Winreg = require("winreg");
 let splashWindow: BrowserWindow | null;
@@ -67,6 +68,8 @@ function createWindow(): void {
 
   mainWindow.webContents.once("did-finish-load", async () => {
     const empresaID = await readEmpresaID();
+
+    // Limpieza de versiones antiguas
 
     // diálogos informativos
     if (!empresaID) {
@@ -219,30 +222,56 @@ app.on("window-all-closed", () => {
 ipcMain.handle("launch-sistema-app", async (_event, dataLoginJson) => {
   const isDev = process.env.NODE_ENV === "development";
 
-  const sistemaAppPath = isDev
-    ? path.join(__dirname, "..", "..", "..", "Electron-NovaVentas")
-    : path.join(path.dirname(process.execPath), "..", "NovaVentas", "NovaVentas.exe");
+  let sistemaAppPath;
 
-  console.log(sistemaAppPath);
+  if (isDev) {
+    sistemaAppPath = path.join(__dirname, "..", "..", "..", "Electron-NovaVentas");
+  } else {
+    const baseDir = path.join(path.dirname(process.execPath), ".."); // Carpeta base donde están las versiones
+    const folders = fs
+      .readdirSync(baseDir, { withFileTypes: true })
+      .filter((dirent) => dirent.isDirectory() && dirent.name.startsWith("NovaVentas-v"))
+      .map((dirent) => dirent.name);
 
-  const command = isDev ? (process.platform === "win32" ? "npm.cmd" : "npm") : `"${sistemaAppPath}"`; // comillas por si hay espacios
+    if (folders.length === 0) {
+      throw new Error("No se encontró ninguna versión instalada de NovaVentas");
+    }
 
-  // const args = isDev ? ["run", "dev"] : [];
+    // Ordenar por versión (descendente)
+    folders.sort((a, b) => {
+      const versionA = a.replace("NovaVentas-v", "").split(".").map(Number);
+      const versionB = b.replace("NovaVentas-v", "").split(".").map(Number);
+
+      for (let i = 0; i < 3; i++) {
+        if (versionA[i] !== versionB[i]) {
+          return versionB[i] - versionA[i];
+        }
+      }
+      return 0;
+    });
+
+    const latestFolder = folders[0]; // Última versión
+    sistemaAppPath = path.join(baseDir, latestFolder, "NovaVentas.exe");
+  }
+
+  console.log("Ejecutando:", sistemaAppPath);
+
+  const command = isDev ? (process.platform === "win32" ? "npm.cmd" : "npm") : `"${sistemaAppPath}"`;
 
   const args = isDev ? ["run", "dev"] : ["/c", "start", '"NovaGestion"', "/B", `"${sistemaAppPath}"`];
 
   const env = { ...process.env, DATA_LOGIN: dataLoginJson };
-  console.log(env);
+
   const child = spawn(command, args, {
     cwd: isDev ? sistemaAppPath : undefined,
     shell: true,
     detached: true,
     stdio: "ignore",
-    windowsHide: false, // <--- esta línea oculta la consola en Windows
+    windowsHide: false,
     env,
   });
 
-  child.unref(); // para que el proceso siga corriendo incluso si se cierra Electron
+  child.unref();
 
   return "OK";
 });
